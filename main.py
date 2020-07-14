@@ -207,11 +207,8 @@ def set_matchups(client):
 def clear_vars():
     client = redis.Redis(host="10.10.10.1", port=6379,
                          password=os.getenv("REDIS_PASS"))
-    total_rosters = 0
-    for dictionary in league:
-        for key, value in dictionary.items():
-            if key == 'total_rosters':
-                total_rosters = value
+    league = get_specific_league()
+    total_rosters = league["total_rosters"]
     i = 1
     for i in range(total_rosters):
         roster = "roster_" + str(i)
@@ -324,6 +321,9 @@ def set_standings():
             repeat += 1
         last = int(value)
         combined_status = combined_status + status + "\n"
+    week = get_week()
+    beginning = f"Week {week} standings: \n\n"
+    combined_status = beginning + combined_status
     send_tweet(combined_status)
 
 
@@ -434,11 +434,14 @@ def follow_followers():
 
 USERS_LIST = set_user_list()
 # if __name__ == "__main__":
+#     clear_vars()
+#     update_week()
+#     weekly_scores()
 #     set_standings()
 # user = get_user()
 # print(user)
 
-# print(time.ctime())
+print(time.ctime())
 # This needs updated
 schedule.every().tuesday.at("15:00").do(weekly_scores)
 schedule.every().tuesday.at("02:00").do(update_week)
