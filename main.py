@@ -433,22 +433,22 @@ def follow_followers():
 
 
 USERS_LIST = set_user_list()
-if __name__ == "__main__":
-    set_standings()
+# if __name__ == "__main__":
+#     set_standings()
 # user = get_user()
 # print(user)
 
 # print(time.ctime())
 # This needs updated
-schedule.every().tuesday.at("03:00").do(weekly_scores)
+schedule.every().tuesday.at("15:00").do(weekly_scores)
 schedule.every().tuesday.at("02:00").do(update_week)
-schedule.every().monday.at("02:00").do(clear_vars)
-schedule.every().tuesday.at("05:00").do(set_standings)
+schedule.every().tuesday.at("05:00").do(clear_vars)
+schedule.every().tuesday.at("17:00").do(set_standings)
 
-# while True:
-#     try:
-#         schedule.run_pending()
-#         time.sleep(1)``
-#     except Exception as identifier:
-#         print(identifier)
-#         time.sleep(1)
+while True:
+    try:
+        schedule.run_pending()
+        time.sleep(1)
+    except Exception as identifier:
+        print(identifier)
+        time.sleep(1)
