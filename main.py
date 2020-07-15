@@ -204,6 +204,35 @@ def set_matchups(client):
     return num_matchups, active_rosters
 
 
+def set_wins(USERS_LIST, client):
+    rosters = get_league_rosters()
+
+    for user in USERS_LIST:
+        wins = 0
+        for roster in rosters:
+            for key, value in roster.items():
+                if key == "settings":
+                    for name, val in value.items():
+                        if name == "wins":
+                            wins = val
+                elif key == "owner_id" and value == user:
+                    client.hset(user, 'wins', wins)
+
+def set_losses(USERS_LIST, client):
+    rosters = get_league_rosters()
+
+    for user in USERS_LIST:
+        losses = 0
+        for roster in rosters:
+            for key, value in roster.items():
+                if key == "settings":
+                    for name, val in value.items():
+                        if name == "losses":
+                            losses = val
+                elif key == "owner_id" and value == user:
+                    client.hset(user, 'losses', losses)
+
+
 def clear_vars():
     client = redis.Redis(host="10.10.10.1", port=6379,
                          password=os.getenv("REDIS_PASS"))
@@ -279,6 +308,10 @@ def get_matchups(client, active_rosters):
 def set_standings():
     client = redis.Redis(host="10.10.10.1", port=6379,
                          password=os.getenv("REDIS_PASS"))
+    USERS_LIST = set_user_list()
+    set_wins(USERS_LIST, client)
+    set_losses(USERS_LIST, client)
+    
     wins = "wins"
     # I think I want to use a dictionary here with the user and their wins
     standings_dict = {}
@@ -300,24 +333,25 @@ def set_standings():
     repeat = 1
     for key, value in standings_dict.items():
         team_name = get_team_name(key)
+        losses = int(client.hget(key, "losses"))
         i += 1
         if i <= leaders and leaders == 1:
-            status = f"1st: {team_name}:     {value} wins"
+            status = f"1st: {team_name}:     {value}-{losses}"
         elif i <= leaders and leaders > 1:
-            status = f"1st: {team_name}:     {value} wins"
+            status = f"1st: {team_name}:     {value}-{losses}"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}: ––– {value} wins"
+            status = f"2nd: {team_name}: ––– {value}-{losses}"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}:     {value} wins"
+            status = f"2nd: {team_name}:     {value}-{losses}"
         elif (i - 3) % 10 == 0 and last > int(value):
-            status = f"3rd: {team_name}:     {value} wins"
+            status = f"3rd: {team_name}:     {value}-{losses}"
         elif (i - 3) % 10 == 0 and last == int(value):
-            status = f"3rd: {team_name}:     {value} wins"
+            status = f"3rd: {team_name}:     {value}-{losses}"
         elif last > int(value):
-            status = f"{i}th: {team_name}:     {value} wins"
+            status = f"{i}th: {team_name}:     {value}-{losses}"
             repeat = 1
         else:
-            status = f"{i - repeat}th: {team_name}     {value} wins"
+            status = f"{i - repeat}th: {team_name}     {value}-{losses}"
             repeat += 1
         last = int(value)
         combined_status = combined_status + status + "\n"
@@ -431,13 +465,11 @@ def follow_followers():
 
 ########## Scheduler ###########
 
-
-USERS_LIST = set_user_list()
 # if __name__ == "__main__":
 #     clear_vars()
 #     update_week()
 #     weekly_scores()
-#     set_standings()
+    # set_standings()
 # user = get_user()
 # print(user)
 
