@@ -449,6 +449,7 @@ def send_tweet(message):
         if e.reason[:13] == "[{'code': 186":
             print("shortening tweet")
             send_tweet(message[:280])
+            send_tweet*(message[280:])
         else:
             print(e.reason)
     
