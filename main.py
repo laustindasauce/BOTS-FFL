@@ -447,9 +447,9 @@ def send_tweet(message):
         api.update_status(str(message))
     except tweepy.TweepError as e:
         if e.reason[:13] == "[{'code': 186":
-            print("shortening tweet")
+            print("Splitting tweet into multiple.")
             send_tweet(message[:280])
-            send_tweet*(message[280:])
+            send_tweet(message[280:])
         else:
             print(e.reason)
     
@@ -467,19 +467,19 @@ def follow_followers():
 ########## Scheduler ###########
 
 # if __name__ == "__main__":
-#     clear_vars()
 #     update_week()
+#     clear_vars()
 #     weekly_scores()
-    # set_standings()
+#     set_standings()
 # user = get_user()
 # print(user)
 
 print(time.ctime())
-# This needs updated
-schedule.every().tuesday.at("15:00").do(weekly_scores)
-schedule.every().tuesday.at("02:00").do(update_week)
-schedule.every().tuesday.at("05:00").do(clear_vars)
-schedule.every().tuesday.at("17:00").do(set_standings)
+
+schedule.every().tuesday.at("08:00").do(weekly_scores)
+schedule.every().monday.at("02:00").do(update_week)
+schedule.every().monday.at("05:00").do(clear_vars)
+schedule.every().tuesday.at("12:00").do(set_standings)
 
 while True:
     try:
