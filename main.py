@@ -204,32 +204,33 @@ def set_matchups(client):
     return num_matchups, active_rosters
 
 
-def set_wins(USERS_LIST, client):
+def set_roster_data():
+    '''
+    Within this function I want to be able to update each settings redis variable; 
+    points_scored, points_allowed, wins, losses
+    '''
+    client = redis.Redis(host="10.10.10.1", port=6379,
+                         password=os.getenv("REDIS_PASS"))
+    USERS_LIST = set_user_list()
     rosters = get_league_rosters()
 
     for user in USERS_LIST:
+        fpts = 0
         wins = 0
-        for roster in rosters:
-            for key, value in roster.items():
-                if key == "settings":
-                    for name, val in value.items():
-                        if name == "wins":
-                            wins = val
-                elif key == "owner_id" and value == user:
-                    client.hset(user, 'wins', wins)
-
-def set_losses(USERS_LIST, client):
-    rosters = get_league_rosters()
-
-    for user in USERS_LIST:
         losses = 0
         for roster in rosters:
             for key, value in roster.items():
                 if key == "settings":
                     for name, val in value.items():
-                        if name == "losses":
+                        if name == "fpts":
+                            fpts = val
+                        elif name == "wins":
+                            wins = val
+                        elif name == "losses":
                             losses = val
                 elif key == "owner_id" and value == user:
+                    client.hset(user, 'fpts', fpts)
+                    client.hset(user, 'wins', wins)
                     client.hset(user, 'losses', losses)
 
 
@@ -267,25 +268,6 @@ def set_user_list():
     # print(users_list)
     return users_list
 
-
-def get_roster_data(client, num_matchups):
-    '''
-    Within this function I want to be able to update each settings redis variable; 
-    points_scored, points_allowed, wins, losses
-    '''
-    rosters = get_league_rosters()
-    i = 0
-    for i in range(num_matchups):
-        match = "matchup_" + str(i)
-        dict = client.hgetall(match)
-        for key, value in dict.items():
-            for roster in rosters:
-                if int(roster.roster_id) == int(key):
-                    # Eventually want to be able to get the data out of settings within roster
-                    print(roster.settings)
-                elif int(roster.roster_id) == int(value):
-                    print(roster.settings)
-
 def get_matchups(client, active_rosters):
     league = get_specific_league()
     total_rosters = 0
@@ -309,10 +291,7 @@ def set_standings():
     client = redis.Redis(host="10.10.10.1", port=6379,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
-    set_wins(USERS_LIST, client)
-    set_losses(USERS_LIST, client)
     
-    wins = "wins"
     # I think I want to use a dictionary here with the user and their wins
     standings_dict = {}
     most_wins = 0
@@ -361,16 +340,57 @@ def set_standings():
     send_tweet(combined_status)
 
 
-# def set_wins():
-#     rosters = get_league_rosters()
-#     i = 0
-#     for user in USERS_LIST:
-#         for roster in rosters:
+def set_point_leaders():
+    client = redis.Redis(host="10.10.10.1", port=6379,
+                         password=os.getenv("REDIS_PASS"))
+    USERS_LIST = set_user_list()
 
-#     for i in range(num_matchups):
-#         match = "matchup_" + str(i)
-#         dict = client.hgetall(match)
-#         for key, value in dict.items():
+    # I think I want to use a dictionary here with the user and their wins
+    standings_dict = {}
+    most_wins = 0
+    for user in USERS_LIST:
+        wins = client.hget(str(user), 'fpts')
+        if wins:
+            standings_dict[user] = int(wins)
+            if int(wins) > most_wins:
+                most_wins = int(wins)
+                leaders = 1
+            elif int(wins) == most_wins:
+                most_wins = int(wins)
+                leaders += 1
+    # Now that I have a dictionary with each user: wins ,,, let's order the dictionary
+    standings_dict = {k: v for k, v in sorted(
+        standings_dict.items(), key=lambda item: item[1], reverse=True)}
+    combined_status = ""
+    i = 0
+    repeat = 1
+    for key, value in standings_dict.items():
+        team_name = get_team_name(key)
+        i += 1
+        if i <= leaders and leaders == 1:
+            status = f"1st: {team_name}:     {value}"
+        elif i <= leaders and leaders > 1:
+            status = f"1st: {team_name}:     {value}"
+        elif (i - 2) % 10 == 0 and last > int(value):
+            status = f"2nd: {team_name}: ––– {value}"
+        elif (i - 2) % 10 == 0 and last > int(value):
+            status = f"2nd: {team_name}:     {value}"
+        elif (i - 3) % 10 == 0 and last > int(value):
+            status = f"3rd: {team_name}:     {value}"
+        elif (i - 3) % 10 == 0 and last == int(value):
+            status = f"3rd: {team_name}:     {value}"
+        elif last > int(value):
+            status = f"{i}th: {team_name}:     {value}"
+            repeat = 1
+        else:
+            status = f"{i - repeat}th: {team_name}     {value}"
+            repeat += 1
+        last = int(value)
+        combined_status = combined_status + status + "\n"
+    week = get_week()
+    beginning = f"Total points through week {week}: \n\n"
+    combined_status = beginning + combined_status
+    send_tweet(combined_status)
 
 
 def get_owner_id(roster_id):
@@ -430,15 +450,11 @@ def tweet_scores(client, num_matchups):
                 else:
                     tweet = first + " & " + second + " tied: " + first_points + " - " + second_points + "\n\n"
         full_tweet = full_tweet + tweet
-    format_and_send_tweet(full_tweet)
-    # send_tweet(full_tweet)
-
-
-def format_and_send_tweet(tweet):
     week = get_week()
     beginning = f"Week {week} results: \n\n"
-    full_tweet = beginning + tweet
+    full_tweet = beginning + full_tweet
     send_tweet(full_tweet)
+    
 
 ########## Twitter API Functions ###########
 
@@ -466,11 +482,13 @@ def follow_followers():
 
 ########## Scheduler ###########
 
-# if __name__ == "__main__":
-#     update_week()
-#     clear_vars()
-#     weekly_scores()
-#     set_standings()
+if __name__ == "__main__":
+    update_week()
+    clear_vars()
+    set_roster_data()
+    set_point_leaders()
+    weekly_scores()
+    set_standings()
 # user = get_user()
 # print(user)
 
@@ -480,6 +498,7 @@ schedule.every().tuesday.at("08:00").do(weekly_scores)
 schedule.every().monday.at("02:00").do(update_week)
 schedule.every().monday.at("05:00").do(clear_vars)
 schedule.every().tuesday.at("12:00").do(set_standings)
+schedule.every().tuesday.at("06:00").do(set_roster_data)
 
 while True:
     try:
