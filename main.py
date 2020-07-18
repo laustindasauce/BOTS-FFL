@@ -471,8 +471,6 @@ def send_tweet(message):
     
 
 def follow_followers():
-    # print(time.ctime())
-    # print("Retrieving and following followers")
     for follower in tweepy.Cursor(api.followers).items():
         if not follower.following:
             print(f"Following {follower.name}")
@@ -482,15 +480,13 @@ def follow_followers():
 
 ########## Scheduler ###########
 
-if __name__ == "__main__":
-    update_week()
-    clear_vars()
-    set_roster_data()
-    set_point_leaders()
-    weekly_scores()
-    set_standings()
-# user = get_user()
-# print(user)
+# if __name__ == "__main__":
+#     update_week()
+#     clear_vars()
+#     set_roster_data()
+#     set_point_leaders()
+#     weekly_scores()
+#     set_standings()
 
 print(time.ctime())
 
