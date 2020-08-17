@@ -8,4 +8,9 @@ This program uses Redis as the database to store any data we want to keep track 
 
 ## Docker
 
-Docker is used for running this program 24/7 and fully automating this bot. At the beginning of the season you can set it up and never touch the script again in theory. 
+Docker is used for running this program 24/7 and fully automating this bot. At the beginning of the season you can set it up and never touch the script again.
+
+## Install Found in twitter-bot repo
+* [Twitter Developer](https://github.com/abspen1/twitter-bot#twitter-developer-set-up)
+* [Redis](https://github.com/abspen1/twitter-bot#redis-setup)
+* [Docker](https://github.com/abspen1/twitter-bot#build--push)
