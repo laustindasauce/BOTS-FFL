@@ -58,7 +58,9 @@ def send_error_message(follower):
 def main():
     print("Beginning our test")
     # follow_specific_user(441228378)
-    send_working_message(441228378)
+    # send_working_message(441228378)
+    year = str(time.ctime())[-4:]
+    print(year)
     
 if __name__ == "__main__":
     main()

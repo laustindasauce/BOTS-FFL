@@ -6,11 +6,12 @@ import schedule
 import time
 import tweepy
 
+'''
+Environment Variables: USER_ID, LEAGUE_ID, REDIS_PASS, CONSUMER_KEY, CONSUMER_SECRET, KEY, 
+                        SECRET, NORTHEAST, SOUTHEAST, MIDWEST, WEST
+'''
 ########## OS Environment Variables ###########
 
-'''
-Environment Variables: USER_ID, LEAGUE_ID, REDIS_PASS, CONSUMER_KEY, CONSUMER_SECRET, KEY, SECRET
-'''
 # Sleeper.app Credentials
 user = os.getenv("USER_ID")
 league = os.getenv("LEAGUE_ID")
@@ -29,11 +30,14 @@ auth.set_access_token(key, secret)
 auth.secure = True
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
+# Set the year since the season will span across multiple years
+year = str(time.ctime())[-4:] # I am not using this but this is for if I do decide to later on
+
 BASE_URL = "https://api.sleeper.app"
 
 USER = f"{BASE_URL}/v1/user/{user}"
 
-ALL_LEAGUES = f"{BASE_URL}/v1/user/{user}/leagues/nfl/2020"
+ALL_LEAGUES = f"{BASE_URL}/v1/user/{user}/leagues/nfl/{year}"
 
 SPECIFIC_LEAGUE = f"{BASE_URL}/v1/league/{league}"
 
@@ -93,7 +97,7 @@ def set_standings():
         elif i <= leaders and leaders > 1:
             status = f"1st: {team_name}:     {value}-{losses}"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}: ––– {value}-{losses}"
+            status = f"2nd: {team_name}:     {value}-{losses}"
         elif (i - 2) % 10 == 0 and last > int(value):
             status = f"2nd: {team_name}:     {value}-{losses}"
         elif (i - 3) % 10 == 0 and last > int(value):
@@ -147,7 +151,7 @@ def set_point_leaders():
         elif i <= leaders and leaders > 1:
             status = f"1st: {team_name}:     {value}"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}: ––– {value}"
+            status = f"2nd: {team_name}:     {value}"
         elif (i - 2) % 10 == 0 and last > int(value):
             status = f"2nd: {team_name}:     {value}"
         elif (i - 3) % 10 == 0 and last > int(value):
@@ -501,21 +505,14 @@ def follow_followers():
 
 ########## Scheduler ###########
 
-# if __name__ == "__main__":
-#     update_week()
-#     clear_vars()
-#     set_roster_data()
-#     set_point_leaders()
-#     weekly_scores()
-#     set_standings()
-
 print(time.ctime())
 
-schedule.every().tuesday.at("08:00").do(weekly_scores)
 schedule.every().monday.at("02:00").do(update_week)
+schedule.every().tuesday.at("08:00").do(weekly_scores)
 schedule.every().monday.at("05:00").do(clear_vars)
-schedule.every().tuesday.at("12:00").do(set_standings)
 schedule.every().tuesday.at("06:00").do(set_roster_data)
+schedule.every().tuesday.at("12:00").do(set_standings)
+
 
 while True:
     try:
