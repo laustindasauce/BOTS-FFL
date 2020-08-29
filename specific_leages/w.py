@@ -15,7 +15,7 @@ Environment Variables: USER_ID, LEAGUE_ID, REDIS_PASS, CONSUMER_KEY, CONSUMER_SE
 
 # Sleeper.app Credentials
 user = os.getenv("USER_ID")
-league = os.getenv("LEAGUE_ID")
+league = os.getenv("WEST")
 
 # Twitter Developer Account Credentials
 consumer_key = os.getenv("CONSUMER_KEY")
@@ -32,14 +32,9 @@ auth.secure = True
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 
-# League ID's
-NORTHEAST = os.getenv("NOTHEAST")
-SOUTHEAST = os.getenv("SOUTHEAST")
-MIDWEST = os.getenv("MIDWEST")
-WEST = os.getenv("WEST")
-
 # Set the year since the season will span across multiple years
-year = str(time.ctime())[-4:] # I am not using this but this is for if I do decide to later on
+# I am not using this but this is for if I do decide to later on
+year = str(time.ctime())[-4:]
 
 # URL endpoints for sleeper.app
 BASE_URL = "https://api.sleeper.app"
@@ -63,7 +58,7 @@ HEADERS = {'USER:': user, 'LEAGUE': league}
 
 
 def weekly_scores():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                          password=os.getenv("REDIS_PASS"))
     # Let's try to get the matchups and then see who won/lost each matchup
     num_matchups, active_rosters = set_matchups(client)
@@ -73,7 +68,7 @@ def weekly_scores():
 
 
 def set_standings():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
 
@@ -130,7 +125,7 @@ def set_standings():
 
 
 def set_point_leaders():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
 
@@ -303,14 +298,14 @@ def get_league_matchups():
 
 
 def get_week():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                          password=os.getenv("REDIS_PASS"))
     # client.set('fantasy_week', '3')
     return int(client.get('fantasy_week'))
 
 
 def update_week():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                          password=os.getenv("REDIS_PASS"))
     week = int(client.get('fantasy_week')) + 1
     client.set('fantasy_week', str(week))
@@ -347,7 +342,7 @@ def set_roster_data():
     Within this function I want to be able to update each settings redis variable; 
     points_scored, points_allowed, wins, losses
     '''
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
     rosters = get_league_rosters()
@@ -373,7 +368,7 @@ def set_roster_data():
 
 
 def clear_vars():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                          password=os.getenv("REDIS_PASS"))
     league = get_specific_league()
     total_rosters = league["total_rosters"]

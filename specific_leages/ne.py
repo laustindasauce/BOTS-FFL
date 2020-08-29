@@ -15,7 +15,7 @@ Environment Variables: USER_ID, LEAGUE_ID, REDIS_PASS, CONSUMER_KEY, CONSUMER_SE
 
 # Sleeper.app Credentials
 user = os.getenv("USER_ID")
-league = os.getenv("LEAGUE_ID")
+league = os.getenv("NOTHEAST")
 
 # Twitter Developer Account Credentials
 consumer_key = os.getenv("CONSUMER_KEY")
@@ -31,15 +31,9 @@ auth.set_access_token(key, secret)
 auth.secure = True
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-
-# League ID's
-NORTHEAST = os.getenv("NOTHEAST")
-SOUTHEAST = os.getenv("SOUTHEAST")
-MIDWEST = os.getenv("MIDWEST")
-WEST = os.getenv("WEST")
-
 # Set the year since the season will span across multiple years
-year = str(time.ctime())[-4:] # I am not using this but this is for if I do decide to later on
+# I am not using this but this is for if I do decide to later on
+year = str(time.ctime())[-4:]
 
 # URL endpoints for sleeper.app
 BASE_URL = "https://api.sleeper.app"
