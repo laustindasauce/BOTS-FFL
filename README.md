@@ -23,3 +23,5 @@ Docker is used for running this program 24/7 and fully automating this bot. At t
 * [Twitter Developer](https://github.com/abspen1/twitter-bot#twitter-developer-set-up)
 * [Redis](https://github.com/abspen1/twitter-bot#redis-setup)
 * [Docker](https://github.com/abspen1/twitter-bot#build--push)
+
+#### Checkout [BOTS FFL](https://twitter.com/BOTSFFL) twitter profile :smiley:
