@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import redis
 import requests
@@ -30,9 +31,17 @@ auth.set_access_token(key, secret)
 auth.secure = True
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
+
+# League ID's
+NORTHEAST = os.getenv("NOTHEAST")
+SOUTHEAST = os.getenv("SOUTHEAST")
+MIDWEST = os.getenv("MIDWEST")
+WEST = os.getenv("WEST")
+
 # Set the year since the season will span across multiple years
 year = str(time.ctime())[-4:] # I am not using this but this is for if I do decide to later on
 
+# URL endpoints for sleeper.app
 BASE_URL = "https://api.sleeper.app"
 
 USER = f"{BASE_URL}/v1/user/{user}"
@@ -81,9 +90,10 @@ def set_standings():
             elif int(wins) == most_wins:
                 most_wins = int(wins)
                 leaders += 1
-    # Now that I have a dictionary with each user: wins ,,, let's order the dictionary
+    # Now that I have a dictionary with each user: wins => let's order the dictionary with lambda expression
     standings_dict = {k: v for k, v in sorted(
         standings_dict.items(), key=lambda item: item[1], reverse=True)}
+    # Initialize combined status var
     combined_status = ""
     i = 0
     repeat = 1
@@ -115,7 +125,8 @@ def set_standings():
     week = get_week()
     beginning = f"Week {week} standings: \n\n"
     combined_status = beginning + combined_status
-    send_tweet(combined_status)
+    num_tweets = math.ceil(len(combined_status) / 274)
+    send_tweet(combined_status, 1, num_tweets)
 
 
 def set_point_leaders():
@@ -169,7 +180,8 @@ def set_point_leaders():
     week = get_week()
     beginning = f"Total points through week {week}: \n\n"
     combined_status = beginning + combined_status
-    send_tweet(combined_status)
+    num_tweets = math.ceil(len(combined_status) / 274)
+    send_tweet(combined_status, 1, num_tweets)
 
 
 ########## Sleeper API Functions ###########
@@ -477,30 +489,33 @@ def tweet_scores(client, num_matchups):
     week = get_week()
     beginning = f"Week {week} results: \n\n"
     full_tweet = beginning + full_tweet
-    send_tweet(full_tweet)
+    num_tweets = math.ceil(len(full_tweet) / 274)
+    send_tweet(full_tweet, 1, num_tweets)
 
 
 ########## Twitter API Functions ###########
 
 
-def send_tweet(message):
+def send_tweet(message, num, total):
     try:
-        api.update_status(str(message))
-    except tweepy.TweepError as e:
-        if e.reason[:13] == "[{'code': 186":
-            print("Splitting tweet into multiple.")
-            send_tweet(message[:280])
-            send_tweet(message[280:])
+        message_length = len(message)
+        if message_length > 274:
+            new_message = message[:274]
+            i = 274
+            while new_message[-1] != "\n":
+                i -= 1
+                new_message = message[:i]
+            send_tweet(new_message, num, total)
+            message_length = message_length - i
+            num += 1
+            send_tweet(message[-message_length:], num, total)
+            api.update_status(str(message))
         else:
+            if total > 1:
+                message = f"({num}/{total})\n" + message
+            api.update_status(message)
+    except tweepy.TweepError as e:
             print(e.reason)
-
-
-def follow_followers():
-    for follower in tweepy.Cursor(api.followers).items():
-        if not follower.following:
-            print(f"Following {follower.name}")
-            follower.follow()
-            time.sleep(2)
 
 
 ########## Scheduler ###########
