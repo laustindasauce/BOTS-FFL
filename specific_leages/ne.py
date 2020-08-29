@@ -515,11 +515,11 @@ def send_tweet(message, num, total):
 
 print(time.ctime())
 
-schedule.every().monday.at("02:00").do(update_week)
-schedule.every().tuesday.at("08:00").do(weekly_scores)
-schedule.every().monday.at("05:00").do(clear_vars)
-schedule.every().tuesday.at("06:00").do(set_roster_data)
-schedule.every().tuesday.at("12:00").do(set_standings)
+schedule.every().monday.at("02:01").do(update_week)
+schedule.every().tuesday.at("08:01").do(weekly_scores)
+schedule.every().monday.at("05:01").do(clear_vars)
+schedule.every().tuesday.at("06:01").do(set_roster_data)
+schedule.every().tuesday.at("12:01").do(set_standings)
 
 
 while True:
