@@ -131,14 +131,26 @@ section {
 section #title {
     border: 0;
     outline: none;
-    /* margin: 0 0 50px 0; */
+    margin: 0 0 50px 0;
     /* padding: 0 0 5px 0; */
+}
+
+#title p {
+    font-size: 18px;
+}
+
+#title span {
+    font-size: 10px;
+}
+
+#title h1 {
+    font-size: 30px;
 }
 
 .wrapper {
     max-width: 800px;
     margin: 0 auto;
-    padding: 5px;
+    /* padding: 5px; */
     position: relative;
     /* padding: 0 20px; */
 }
@@ -197,4 +209,17 @@ a:-webkit-any-link {
     color: -webkit-link;
     cursor: pointer;
     text-decoration: underline;
+}
+
+#footer {
+    position: absolute;
+    width: 100%;
+    margin: 0 auto;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    text-align: center;
+    padding: 1.2rem;
+    font-size: 1rem;
+    /* margin-top: -4.5rem; */
 }
