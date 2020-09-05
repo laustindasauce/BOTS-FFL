@@ -75,6 +75,7 @@ def set_standings():
     # I think I want to use a dictionary here with the user and their wins
     standings_dict = {}
     most_wins = 0
+    leaders = 0
     for user in USERS_LIST:
         wins = client.hget(str(user), 'wins')
         if wins:
@@ -118,8 +119,8 @@ def set_standings():
         last = int(value)
         combined_status = combined_status + status + "\n"
     week = get_week()
-    beginning = f"Week {week} standings: \n\n"
-    combined_status = beginning + combined_status
+    beginning = f"SouthEast - week {week} standings: \n\n"
+    combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
     send_tweet(combined_status, 1, num_tweets)
 
@@ -132,6 +133,7 @@ def set_point_leaders():
     # I think I want to use a dictionary here with the user and their wins
     standings_dict = {}
     most_wins = 0
+    leaders = 0
     for user in USERS_LIST:
         wins = client.hget(str(user), 'fpts')
         if wins:
@@ -173,8 +175,8 @@ def set_point_leaders():
         last = int(value)
         combined_status = combined_status + status + "\n"
     week = get_week()
-    beginning = f"Total points through week {week}: \n\n"
-    combined_status = beginning + combined_status
+    beginning = f"SouthEast - total points through week {week}: \n\n"
+    combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
     send_tweet(combined_status, 1, num_tweets)
 
@@ -324,6 +326,8 @@ def set_matchups(client):
                 roster = "roster_" + str(value)
                 active_rosters.append(roster)
             elif key == 'points':
+                if not value:
+                    value = "0"
                 client.hset(roster, "points", str(int(value)))
             elif key == 'matchup_id':
                 if value > num_matchups:
@@ -481,8 +485,8 @@ def tweet_scores(client, num_matchups):
                         first_points + " - " + second_points + "\n\n"
         full_tweet = full_tweet + tweet
     week = get_week()
-    beginning = f"Week {week} results: \n\n"
-    full_tweet = beginning + full_tweet
+    beginning = f"SouthEast - week {week} results: \n\n"
+    full_tweet = beginning + full_tweet + "\n#BOTS2020"
     num_tweets = math.ceil(len(full_tweet) / 274)
     send_tweet(full_tweet, 1, num_tweets)
 
