@@ -308,8 +308,8 @@ def get_week():
 def update_week():
     client = redis.Redis(host="10.10.10.1", port=6379, db=1,
                          password=os.getenv("REDIS_PASS"))
-    week = int(client.get('fantasy_week')) + 1
-    client.set('fantasy_week', str(week))
+    client.incr("fantasy_week")
+    week = int(client.get('fantasy_week'))
     print(f"We are now on week {week} for fantasy football.")
 
 
