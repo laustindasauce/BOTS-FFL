@@ -136,18 +136,19 @@ def set_point_leaders():
 
     # I think I want to use a dictionary here with the user and their wins
     standings_dict = {}
-    most_wins = 0
+    most_points = 0
+    leaders = 0
     for user in USERS_LIST:
-        wins = client.hget(str(user), 'fpts')
-        if wins:
-            standings_dict[user] = int(wins)
-            if int(wins) > most_wins:
-                most_wins = int(wins)
+        points = client.hget(str(user), 'fpts')
+        if points:
+            standings_dict[user] = int(points)
+            if int(points) > most_points:
+                most_points = int(points)
                 leaders = 1
-            elif int(wins) == most_wins:
-                most_wins = int(wins)
+            elif int(points) == most_points:
+                most_points = int(points)
                 leaders += 1
-    # Now that I have a dictionary with each user: wins ,,, let's order the dictionary
+    # Now that I have a dictionary with each user: points ,,, let's order the dictionary
     standings_dict = {k: v for k, v in sorted(
         standings_dict.items(), key=lambda item: item[1], reverse=True)}
     combined_status = ""
@@ -178,7 +179,7 @@ def set_point_leaders():
         last = int(value)
         combined_status = combined_status + status + "\n"
     week = get_week()
-    beginning = f"Total points through week {week}: \n\n"
+    beginning = f"Point leaders through week {week}: \n\n"
     combined_status = beginning + combined_status
     num_tweets = math.ceil(len(combined_status) / 274)
     send_tweet(combined_status, 1, num_tweets)
@@ -312,8 +313,8 @@ def get_week():
 def update_week():
     client = redis.Redis(host="10.10.10.1", port=6379, db=1,
                          password=os.getenv("REDIS_PASS"))
-    week = int(client.get('fantasy_week')) + 1
-    client.set('fantasy_week', str(week))
+    client.incr('fantasy_week')
+    week = int(client.get('fantasy_week'))
     print(f"We are now on week {week} for fantasy football.")
 
 
@@ -402,7 +403,6 @@ def set_user_list():
         for key, value in user.items():
             if key == 'user_id':
                 users_list.append(value)
-    # print(users_list)
     return users_list
 
 
@@ -518,7 +518,8 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-
+set_roster_data()
+set_point_leaders()
 print(time.ctime())
 
 schedule.every().monday.at("02:00").do(update_week)

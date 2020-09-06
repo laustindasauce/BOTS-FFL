@@ -121,8 +121,8 @@ def set_standings():
     beginning = f"MidWest - week {week} standings: \n\n"
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
-    send_tweet(combined_status, 1, num_tweets)
-    # print(combined_status, 1, num_tweets)
+    # send_tweet(combined_status, 1, num_tweets)
+    print(combined_status)
 
 
 def set_point_leaders():
@@ -132,27 +132,33 @@ def set_point_leaders():
 
     # I think I want to use a dictionary here with the user and their wins
     standings_dict = {}
-    most_wins = 0
+    most_points = 0
     leaders = 0
     for user in USERS_LIST:
-        wins = client.hget(str(user), 'fpts')
-        if wins:
-            standings_dict[user] = int(wins)
-            if int(wins) > most_wins:
-                most_wins = int(wins)
+        points = client.hget(str(user), 'fpts')
+        if points:
+            standings_dict[user] = int(points)
+            if int(points) > most_points:
+                most_points = int(points)
                 leaders = 1
-            elif int(wins) == most_wins:
-                most_wins = int(wins)
+            elif int(points) == most_points:
+                most_points = int(points)
                 leaders += 1
-    # Now that I have a dictionary with each user: wins ,,, let's order the dictionary
+        else:
+            standings_dict[user] = 0.0
+    # Now that I have a dictionary with each user: points ,,, let's order the dictionary
     standings_dict = {k: v for k, v in sorted(
         standings_dict.items(), key=lambda item: item[1], reverse=True)}
     combined_status = ""
     i = 0
     repeat = 1
     last = 0
+    teams = []
     for key, value in standings_dict.items():
         team_name = get_team_name(key)
+        if team_name in teams:
+            continue
+        teams.append(team_name)
         i += 1
         if i <= leaders and leaders == 1:
             status = f"1st: {team_name}:     {value}"
@@ -175,11 +181,11 @@ def set_point_leaders():
         last = int(value)
         combined_status = combined_status + status + "\n"
     week = get_week()
-    beginning = f"MidWest - total points through week {week}: \n\n"
-    combined_status = beginning + combined_status + "\n#BOTS2020"
+    beginning = f"Midwest - point leaders through week {week}: \n\n"
+    combined_status = beginning + combined_status + "BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
-    send_tweet(combined_status, 1, num_tweets)
-    # print(combined_status, 1, num_tweets)
+    # send_tweet(combined_status, 1, num_tweets)
+    print(combined_status)
 
 
 ########## Sleeper API Functions ###########
@@ -519,7 +525,7 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-
+set_point_leaders()
 print(time.ctime())
 
 schedule.every().monday.at("02:04").do(update_week)

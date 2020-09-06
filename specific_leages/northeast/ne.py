@@ -150,8 +150,12 @@ def set_point_leaders():
     i = 0
     repeat = 1
     last = 0
+    teams = []
     for key, value in standings_dict.items():
         team_name = get_team_name(key)
+        if team_name in teams:
+            continue
+        teams.append(team_name)
         i += 1
         if i <= leaders and leaders == 1:
             status = f"1st: {team_name}:     {value}"

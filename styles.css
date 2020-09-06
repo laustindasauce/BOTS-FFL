@@ -211,6 +211,15 @@ a:-webkit-any-link {
     text-decoration: underline;
 }
 
+#leaderboards h1{
+    margin-left: 4rem;
+    font-size: 30px;
+}
+
+.region h2{
+    color: #C9011E;
+}
+
 #footer {
     position: absolute;
     width: 100%;
@@ -221,5 +230,4 @@ a:-webkit-any-link {
     text-align: center;
     padding: 1.2rem;
     font-size: 1rem;
-    /* margin-top: -4.5rem; */
 }
