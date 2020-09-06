@@ -122,6 +122,7 @@ def set_standings():
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
     send_tweet(combined_status, 1, num_tweets)
+    client.set('ne_standings', combined_status)
 
 
 def set_point_leaders():
@@ -182,7 +183,8 @@ def set_point_leaders():
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
     send_tweet(combined_status, 1, num_tweets)
-
+    client.set('ne_points', combined_status)
+    
 
 ########## Sleeper API Functions ###########
 

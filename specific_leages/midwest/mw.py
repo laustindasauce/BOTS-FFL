@@ -123,6 +123,9 @@ def set_standings():
     num_tweets = math.ceil(len(combined_status) / 274)
     # send_tweet(combined_status, 1, num_tweets)
     print(combined_status)
+    client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                         password=os.getenv("REDIS_PASS"))
+    client.set('mw_standings', combined_status)
 
 
 def set_point_leaders():
@@ -182,11 +185,13 @@ def set_point_leaders():
         combined_status = combined_status + status + "\n"
     week = get_week()
     beginning = f"Midwest - point leaders through week {week}: \n\n"
-    combined_status = beginning + combined_status + "BOTS2020"
+    combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
     # send_tweet(combined_status, 1, num_tweets)
     print(combined_status)
-
+    client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                         password=os.getenv("REDIS_PASS"))
+    client.set('mw_points', combined_status)
 
 ########## Sleeper API Functions ###########
 
@@ -525,6 +530,7 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
+set_standings()
 set_point_leaders()
 print(time.ctime())
 
