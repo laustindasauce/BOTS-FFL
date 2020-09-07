@@ -95,8 +95,11 @@ def set_standings():
     last = 0
     for key, value in standings_dict.items():
         team_name = get_team_name(key)
+        client = redis.Redis(host="10.10.10.1", port=6379, db=4,
+                             password=os.getenv("REDIS_PASS"))
         losses = int(client.hget(key, "losses"))
         i += 1
+        standings = "mw_standings_" + str(i)
         if i <= leaders and leaders == 1:
             status = f"1st: {team_name}:     {value}-{losses}"
         elif i <= leaders and leaders > 1:
@@ -115,6 +118,9 @@ def set_standings():
         else:
             status = f"{i - repeat}th: {team_name}     {value}-{losses}"
             repeat += 1
+        client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                             password=os.getenv("REDIS_PASS"))
+        client.set(standings, status)
         last = int(value)
         combined_status = combined_status + status + "\n"
     week = get_week()
@@ -123,9 +129,7 @@ def set_standings():
     num_tweets = math.ceil(len(combined_status) / 274)
     # send_tweet(combined_status, 1, num_tweets)
     print(combined_status)
-    client = redis.Redis(host="10.10.10.1", port=6379, db=0,
-                         password=os.getenv("REDIS_PASS"))
-    client.set('mw_standings', combined_status)
+    
 
 
 def set_point_leaders():
@@ -157,6 +161,8 @@ def set_point_leaders():
     repeat = 1
     last = 0
     teams = []
+    client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                         password=os.getenv("REDIS_PASS"))
     for key, value in standings_dict.items():
         team_name = get_team_name(key)
         if team_name in teams:
@@ -181,6 +187,8 @@ def set_point_leaders():
         else:
             status = f"{i - repeat}th: {team_name}     {value}"
             repeat += 1
+        point_leaders = "mw_points_" + str(i)
+        client.set(point_leaders, status)
         last = int(value)
         combined_status = combined_status + status + "\n"
     week = get_week()
@@ -189,9 +197,7 @@ def set_point_leaders():
     num_tweets = math.ceil(len(combined_status) / 274)
     # send_tweet(combined_status, 1, num_tweets)
     print(combined_status)
-    client = redis.Redis(host="10.10.10.1", port=6379, db=0,
-                         password=os.getenv("REDIS_PASS"))
-    client.set('mw_points', combined_status)
+    
 
 ########## Sleeper API Functions ###########
 
