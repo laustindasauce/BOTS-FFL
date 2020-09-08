@@ -220,6 +220,28 @@ a:-webkit-any-link {
     color: #C9011E;
 }
 
+.region {
+    display: flex;
+    margin: 10px;
+    align-content: center;
+}
+
+.west {
+    margin: 5px;
+}
+
+.northeast {
+    margin: 5px;
+}
+
+.southeast {
+    margin: 5px;
+}
+
+.midwest {
+    margin: 5px;
+}
+
 #footer {
     position: absolute;
     width: 100%;
