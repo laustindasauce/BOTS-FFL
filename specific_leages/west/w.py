@@ -95,6 +95,8 @@ def set_standings():
     repeat = 1
     last = 0
     for key, value in standings_dict.items():
+        client = redis.Redis(host="10.10.10.1", port=6379, db=3,
+                             password=os.getenv("REDIS_PASS"))
         team_name = get_team_name(key)
         losses = int(client.hget(key, "losses"))
         i += 1
@@ -116,13 +118,17 @@ def set_standings():
         else:
             status = f"{i - repeat}th: {team_name}     {value}-{losses}"
             repeat += 1
+        client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                             password=os.getenv("REDIS_PASS"))
+        standings = "w_standings_" + str(i)
+        client.set(standings, status)
         last = int(value)
         combined_status = combined_status + status + "\n"
     week = get_week()
     beginning = f"West - week {week} standings: \n\n"
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
-    send_tweet(combined_status, 1, num_tweets)
+    # send_tweet(combined_status, 1, num_tweets)
 
 
 def set_point_leaders():
@@ -176,13 +182,15 @@ def set_point_leaders():
         else:
             status = f"{i - repeat}th: {team_name}     {value}"
             repeat += 1
+        point_leaders = "w_points_" + str(i)
+        client.set(point_leaders, status)
         last = int(value)
         combined_status = combined_status + status + "\n#BOTS2020"
     week = get_week()
     beginning = f"West - total points through week {week}: \n\n"
     combined_status = beginning + combined_status
     num_tweets = math.ceil(len(combined_status) / 274)
-    send_tweet(combined_status, 1, num_tweets)
+    # send_tweet(combined_status, 1, num_tweets)
 
 
 ########## Sleeper API Functions ###########
@@ -339,7 +347,6 @@ def set_matchups(client):
                 client.hset(roster, "matchup", value)
                 match = "matchup_" + str(value)
                 client.sadd(match, roster)
-        #
     print(f"There are {num_matchups} different matchups this week.")
     # Now I have the matchups saved within redis database
     return num_matchups, active_rosters

@@ -99,7 +99,6 @@ def set_standings():
                              password=os.getenv("REDIS_PASS"))
         losses = int(client.hget(key, "losses"))
         i += 1
-        standings = "mw_standings_" + str(i)
         if i <= leaders and leaders == 1:
             status = f"1st: {team_name}:     {value}-{losses}"
         elif i <= leaders and leaders > 1:
@@ -120,6 +119,7 @@ def set_standings():
             repeat += 1
         client = redis.Redis(host="10.10.10.1", port=6379, db=0,
                              password=os.getenv("REDIS_PASS"))
+        standings = "mw_standings_" + str(i)
         client.set(standings, status)
         last = int(value)
         combined_status = combined_status + status + "\n"

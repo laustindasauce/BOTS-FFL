@@ -95,6 +95,8 @@ def set_standings():
     repeat = 1
     last = 0
     for key, value in standings_dict.items():
+        client = redis.Redis(host="10.10.10.1", port=6379, db=2,
+                             password=os.getenv("REDIS_PASS"))
         team_name = get_team_name(key)
         losses = int(client.hget(key, "losses"))
         i += 1
@@ -116,13 +118,17 @@ def set_standings():
         else:
             status = f"{i - repeat}th: {team_name}     {value}-{losses}"
             repeat += 1
+        client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                             password=os.getenv("REDIS_PASS"))
+        standings = "se_standings_" + str(i)
+        client.set(standings, status)
         last = int(value)
         combined_status = combined_status + status + "\n"
     week = get_week()
     beginning = f"SouthEast - week {week} standings: \n\n"
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
-    send_tweet(combined_status, 1, num_tweets)
+    # send_tweet(combined_status, 1, num_tweets)
 
 
 def set_point_leaders():
@@ -152,6 +158,8 @@ def set_point_leaders():
     repeat = 1
     last = 0
     teams = []
+    client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                         password=os.getenv("REDIS_PASS"))
     for key, value in standings_dict.items():
         team_name = get_team_name(key)
         if team_name in teams:
@@ -176,13 +184,15 @@ def set_point_leaders():
         else:
             status = f"{i - repeat}th: {team_name}     {value}"
             repeat += 1
+        point_leaders = "se_points_" + str(i)
+        client.set(point_leaders, status)
         last = int(value)
         combined_status = combined_status + status + "\n"
     week = get_week()
     beginning = f"SouthEast - total points through week {week}: \n\n"
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
-    send_tweet(combined_status, 1, num_tweets)
+    # send_tweet(combined_status, 1, num_tweets)
 
 
 ########## Sleeper API Functions ###########
