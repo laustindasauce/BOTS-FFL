@@ -9,7 +9,7 @@ import tweepy
 
 '''
 Environment Variables: USER_ID, LEAGUE_ID, REDIS_PASS, CONSUMER_KEY, CONSUMER_SECRET, KEY, 
-                        SECRET, NORTHEAST, SOUTHEAST, MIDWEST, WEST
+                        SECRET, NORTHEAST, West, MIDWEST, WEST
 '''
 ########## OS Environment Variables ###########
 
@@ -30,7 +30,6 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(key, secret)
 auth.secure = True
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-
 
 # Set the year since the season will span across multiple years
 # I am not using this but this is for if I do decide to later on
@@ -86,6 +85,11 @@ def set_standings():
             elif int(wins) == most_wins:
                 most_wins = int(wins)
                 leaders += 1
+        else:
+            standings_dict[user] = 0
+            if 0 == most_wins:
+                most_wins = 0
+                leaders += 1
     # Now that I have a dictionary with each user: wins => let's order the dictionary with lambda expression
     standings_dict = {k: v for k, v in sorted(
         standings_dict.items(), key=lambda item: item[1], reverse=True)}
@@ -94,29 +98,37 @@ def set_standings():
     i = 0
     repeat = 1
     last = 0
+    teams = []
     for key, value in standings_dict.items():
         client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                              password=os.getenv("REDIS_PASS"))
         team_name = get_team_name(key)
-        losses = int(client.hget(key, "losses"))
+        if team_name in teams:
+            continue
+        teams.append(team_name)
+        losses = client.hget(key, "losses")
+        if losses:
+            losses = int(losses)
+        else:
+            losses = 0
         i += 1
         if i <= leaders and leaders == 1:
-            status = f"1st: {team_name}:     {value}-{losses}"
+            status = f"1st: {team_name}     {value}-{losses}"
         elif i <= leaders and leaders > 1:
-            status = f"1st: {team_name}:     {value}-{losses}"
+            status = f"1st: {team_name}     {value}-{losses}"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}:     {value}-{losses}"
+            status = f"2nd: {team_name}     {value}-{losses}"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}:     {value}-{losses}"
+            status = f"2nd: {team_name}     {value}-{losses}"
         elif (i - 3) % 10 == 0 and last > int(value):
-            status = f"3rd: {team_name}:     {value}-{losses}"
+            status = f"3rd: {team_name}     {value}-{losses}"
         elif (i - 3) % 10 == 0 and last == int(value):
-            status = f"3rd: {team_name}:     {value}-{losses}"
+            status = f"3rd: {team_name}     {value}-{losses}"
         elif last > int(value):
-            status = f"{i}th: {team_name}:     {value}-{losses}"
+            status = f"{i}th: {team_name}     {value}-{losses}"
             repeat = 1
         else:
-            status = f"{i - repeat}th: {team_name}     {value}-{losses}"
+            status = f"{i - repeat}th {team_name}     {value}-{losses}"
             repeat += 1
         client = redis.Redis(host="10.10.10.1", port=6379, db=0,
                              password=os.getenv("REDIS_PASS"))
@@ -129,6 +141,7 @@ def set_standings():
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
     # send_tweet(combined_status, 1, num_tweets)
+    print(combined_status)
 
 
 def set_point_leaders():
@@ -140,15 +153,23 @@ def set_point_leaders():
     standings_dict = {}
     most_wins = 0
     leaders = 0
+    standings_dict = {}
+    most_points = 0
+    leaders = 0
     for user in USERS_LIST:
-        wins = client.hget(str(user), 'fpts')
-        if wins:
-            standings_dict[user] = int(wins)
-            if int(wins) > most_wins:
-                most_wins = int(wins)
+        points = client.hget(str(user), 'fpts')
+        if points:
+            standings_dict[user] = int(points)
+            if int(points) > most_points:
+                most_points = int(points)
                 leaders = 1
-            elif int(wins) == most_wins:
-                most_wins = int(wins)
+            elif int(points) == most_points:
+                most_wins = int(points)
+                leaders += 1
+        else:
+            standings_dict[user] = 0
+            if 0 >= most_points:
+                most_points = 0
                 leaders += 1
     # Now that I have a dictionary with each user: wins ,,, let's order the dictionary
     standings_dict = {k: v for k, v in sorted(
@@ -158,6 +179,8 @@ def set_point_leaders():
     repeat = 1
     last = 0
     teams = []
+    client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                         password=os.getenv("REDIS_PASS"))
     for key, value in standings_dict.items():
         team_name = get_team_name(key)
         if team_name in teams:
@@ -185,12 +208,13 @@ def set_point_leaders():
         point_leaders = "w_points_" + str(i)
         client.set(point_leaders, status)
         last = int(value)
-        combined_status = combined_status + status + "\n#BOTS2020"
+        combined_status = combined_status + status + "\n"
     week = get_week()
     beginning = f"West - total points through week {week}: \n\n"
-    combined_status = beginning + combined_status
+    combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
     # send_tweet(combined_status, 1, num_tweets)
+    print(combined_status)
 
 
 ########## Sleeper API Functions ###########
@@ -347,6 +371,7 @@ def set_matchups(client):
                 client.hset(roster, "matchup", value)
                 match = "matchup_" + str(value)
                 client.sadd(match, roster)
+        #
     print(f"There are {num_matchups} different matchups this week.")
     # Now I have the matchups saved within redis database
     return num_matchups, active_rosters
@@ -528,14 +553,17 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-
+update_week()
+set_roster_data()
+set_standings()
+set_point_leaders()
 print(time.ctime())
 
-schedule.every().monday.at("02:03").do(update_week)
-schedule.every().tuesday.at("08:03").do(weekly_scores)
-schedule.every().monday.at("05:03").do(clear_vars)
-schedule.every().tuesday.at("06:03").do(set_roster_data)
-schedule.every().tuesday.at("12:03").do(set_standings)
+schedule.every().monday.at("02:01").do(update_week)
+schedule.every().tuesday.at("08:01").do(weekly_scores)
+schedule.every().monday.at("05:01").do(clear_vars)
+schedule.every().tuesday.at("06:01").do(set_roster_data)
+schedule.every().tuesday.at("12:01").do(set_standings)
 
 
 while True:

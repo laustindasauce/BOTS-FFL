@@ -85,6 +85,11 @@ def set_standings():
             elif int(wins) == most_wins:
                 most_wins = int(wins)
                 leaders += 1
+        else:
+            standings_dict[user] = 0
+            if 0 == most_wins:
+                most_wins = 0
+                leaders += 1
     # Now that I have a dictionary with each user: wins => let's order the dictionary with lambda expression
     standings_dict = {k: v for k, v in sorted(
         standings_dict.items(), key=lambda item: item[1], reverse=True)}
@@ -129,7 +134,6 @@ def set_standings():
     num_tweets = math.ceil(len(combined_status) / 274)
     # send_tweet(combined_status, 1, num_tweets)
     print(combined_status)
-    
 
 
 def set_point_leaders():
@@ -137,7 +141,7 @@ def set_point_leaders():
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
 
-    # I think I want to use a dictionary here with the user and their wins
+    # I think I want to use a dictionary here with the user and their points
     standings_dict = {}
     most_points = 0
     leaders = 0
@@ -145,14 +149,17 @@ def set_point_leaders():
         points = client.hget(str(user), 'fpts')
         if points:
             standings_dict[user] = int(points)
-            if int(points) > most_points:
+            if int(points) >= most_points:
                 most_points = int(points)
                 leaders = 1
             elif int(points) == most_points:
-                most_points = int(points)
+                most_wins = int(points)
                 leaders += 1
         else:
-            standings_dict[user] = 0.0
+            standings_dict[user] = 0
+            if 0 >= most_points:
+                most_points = 0
+                leaders += 1
     # Now that I have a dictionary with each user: points ,,, let's order the dictionary
     standings_dict = {k: v for k, v in sorted(
         standings_dict.items(), key=lambda item: item[1], reverse=True)}
