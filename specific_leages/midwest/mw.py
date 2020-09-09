@@ -98,11 +98,19 @@ def set_standings():
     i = 0
     repeat = 1
     last = 0
+    teams = []
     for key, value in standings_dict.items():
         team_name = get_team_name(key)
+        if team_name in teams:
+            continue
+        teams.append(team_name)
         client = redis.Redis(host="10.10.10.1", port=6379, db=4,
                              password=os.getenv("REDIS_PASS"))
-        losses = int(client.hget(key, "losses"))
+        losses = client.hget(key, "losses")
+        if losses:
+            losses = int(losses)
+        else:
+            losses = 0
         i += 1
         if i <= leaders and leaders == 1:
             status = f"1st: {team_name}:     {value}-{losses}"
@@ -149,7 +157,7 @@ def set_point_leaders():
         points = client.hget(str(user), 'fpts')
         if points:
             standings_dict[user] = int(points)
-            if int(points) >= most_points:
+            if int(points) > most_points:
                 most_points = int(points)
                 leaders = 1
             elif int(points) == most_points:
@@ -177,22 +185,22 @@ def set_point_leaders():
         teams.append(team_name)
         i += 1
         if i <= leaders and leaders == 1:
-            status = f"1st: {team_name}:     {value}"
+            status = f"1st: {team_name}: {value}"
         elif i <= leaders and leaders > 1:
-            status = f"1st: {team_name}:     {value}"
+            status = f"1st: {team_name}: {value}"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}:     {value}"
+            status = f"2nd: {team_name}: {value}"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}:     {value}"
+            status = f"2nd: {team_name}: {value}"
         elif (i - 3) % 10 == 0 and last > int(value):
-            status = f"3rd: {team_name}:     {value}"
+            status = f"3rd: {team_name}: {value}"
         elif (i - 3) % 10 == 0 and last == int(value):
-            status = f"3rd: {team_name}:     {value}"
+            status = f"3rd: {team_name}: {value}"
         elif last > int(value):
-            status = f"{i}th: {team_name}:     {value}"
+            status = f"{i}th: {team_name}: {value}"
             repeat = 1
         else:
-            status = f"{i - repeat}th: {team_name}     {value}"
+            status = f"{i - repeat}th: {team_name}: {value}"
             repeat += 1
         point_leaders = "mw_points_" + str(i)
         client.set(point_leaders, status)
@@ -419,16 +427,14 @@ def clear_vars():
 
 
 def set_user_list():
-    users = get_user_in_league()
+    users = get_league_rosters()
     users_list = []
+    i = 0
     for user in users:
-        # print(user)
-        for key, value in user.items():
-            if key == 'user_id':
-                users_list.append(value)
-    # print(users_list)
+        i += 1
+        users_list.append(user["owner_id"])
     return users_list
-
+    
 
 def get_matchups(client, active_rosters):
     league = get_specific_league()

@@ -430,14 +430,12 @@ def clear_vars():
 
 
 def set_user_list():
-    users = get_user_in_league()
+    users = get_league_rosters()
     users_list = []
+    i = 0
     for user in users:
-        # print(user)
-        for key, value in user.items():
-            if key == 'user_id':
-                users_list.append(value)
-    # print(users_list)
+        i += 1
+        users_list.append(user["owner_id"])
     return users_list
 
 
