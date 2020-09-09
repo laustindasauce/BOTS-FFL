@@ -94,7 +94,7 @@ body {
     margin-right: 10px;
 }
 
-.nav-item:after {
+/* .nav-item:after {
     content: "";
     position: absolute;
     width: 100%;
@@ -108,7 +108,7 @@ body {
 
 .nav-item:hover:after {
     opacity: 1;
-}
+} */
 
 #pic {
     /* width: 100%; */
