@@ -95,17 +95,18 @@ body {
 
 #disclaimer {
     text-decoration: none;
+    width: auto;
+    height: auto;
     /* width: auto; */
     color: #eaeaea;
 }
 
 #pic {
     /* width: 100%; */
-    width: auto;
-    height: auto;
-    max-width: 800px;
+    position: relative;
+    width: 100%;
+    margin: 5px;
     border-radius: 15px;
-    /* margin: 5px; */
     /* max-height: 400px; */
 }
 
