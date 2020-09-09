@@ -474,7 +474,7 @@ def get_owner_id(roster_id):
 
 def get_team_name(id):
     if id == "452917434727264256":
-        return "Michigan"
+        return "MafiaAffiliated"
     team_name = "unknown"
     flag = False
     users = get_user_in_league()
@@ -554,7 +554,8 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-weekly_scores()
+set_standings()
+set_point_leaders()
 print(time.ctime())
 
 schedule.every().monday.at("02:01").do(update_week)
