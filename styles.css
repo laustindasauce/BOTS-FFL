@@ -171,10 +171,15 @@ section {
 }
 
 section #title {
-    border: 0;
+    /* border: 0; */
     outline: none;
     margin: 0 0 50px 0;
     /* padding: 0 0 5px 0; */
+}
+
+section h1 {
+    text-align: center;
+    font-size: 40px;
 }
 
 #title p {
@@ -253,15 +258,11 @@ a:-webkit-any-link {
     text-decoration: underline;
 }
 
-#standings h1{
-    text-align: center;
-    font-size: 40px;
-}
-/* 
+
 #standings {
-    border: solid #042C68;
-    border-width: 10px;
-} */
+    border-top: solid #9A9A9A;
+    border-width: 0.5px;
+}
 
 .region h2{
     color: #C9011E;
@@ -269,7 +270,7 @@ a:-webkit-any-link {
 
 .region {
     display: flex;
-    margin: 20px;
+    /* margin: 20px; */
     /* border: solid #4c7ec9;
     border-width: 7px; */
     display: inline-table;
