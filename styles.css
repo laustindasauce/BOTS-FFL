@@ -91,7 +91,7 @@ body {
     display: inline-block;
     font-family: Comfortaa, sans-serif;
     font-size: 15px;
-    margin-right: 2rem;
+    margin-right: 10px;
 }
 
 .nav-item:after {
