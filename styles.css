@@ -35,11 +35,11 @@ body {
     margin-left: 0px;
 }
 
-#header nav {
+#header nav li {
     max-width: 650px;
     margin: 0 auto;
     padding: 0 10px;
-    background: blue;
+    /* background: blue; */
     margin: 6px auto;
 }
 
@@ -61,17 +61,49 @@ body {
 #header nav li a:hover {
     background-color: #c9011fab;
 }
+.navbar {
+    text-align: right;
+    position: fixed;
+    right: 0;
+    z-index: 100;
+    width: 100%;
+    /* padding-bottom: 1rem;
+    padding-top: 1rem; */
+}
+
+.navbar-container {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    max-width: 120rem;
+    margin: 0 auto;
+    align-items: center;
+    min-height: 4.5rem;
+    text-align: right;
+    color: #f2f2f2;
+    z-index: 2;
+    transition: all .1s linear;
+}
+
+.nav-item {
+    position: relative;
+    display: inline-block;
+    font-family: Comfortaa, sans-serif;
+    font-size: 15px;
+    margin-right: 2rem;
+}
 
 #disclaimer {
     text-decoration: none;
-    /* width: 800px; */
+    /* width: auto; */
     color: #eaeaea;
 }
 
 #pic {
-    width: 100%;
+    /* width: 100%; */
+    width: auto;
     height: auto;
-    max-width: 600px;
+    max-width: 800px;
     border-radius: 15px;
     /* margin: 5px; */
     /* max-height: 400px; */
@@ -211,10 +243,15 @@ a:-webkit-any-link {
     text-decoration: underline;
 }
 
-#leaderboards h1{
-    margin-left: 4rem;
-    font-size: 30px;
+#standings h1{
+    text-align: center;
+    font-size: 40px;
 }
+/* 
+#standings {
+    border: solid #042C68;
+    border-width: 10px;
+} */
 
 .region h2{
     color: #C9011E;
@@ -222,24 +259,32 @@ a:-webkit-any-link {
 
 .region {
     display: flex;
-    margin: 10px;
-    align-content: center;
+    margin: 20px;
+    /* border: solid #4c7ec9;
+    border-width: 7px; */
+    display: inline-table;
+    width: 100%;
+    table-layout: fixed;
 }
 
 .west {
     margin: 5px;
+    display: table-cell;
 }
 
 .northeast {
     margin: 5px;
+    display: table-cell;
 }
 
 .southeast {
     margin: 5px;
+    display: table-cell;
 }
 
 .midwest {
     margin: 5px;
+    display: table-cell;
 }
 
 #footer {
@@ -250,6 +295,6 @@ a:-webkit-any-link {
     background-color: rgba(0, 0, 0, 0.3);
     color: white;
     text-align: center;
-    padding: 1.2rem;
+    padding: .5rem;
     font-size: 1rem;
 }
