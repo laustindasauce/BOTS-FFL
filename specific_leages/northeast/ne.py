@@ -59,6 +59,8 @@ HEADERS = {'USER:': user, 'LEAGUE': league}
 def weekly_scores():
     client = redis.Redis(host="10.10.10.1", port=6379, db=5,
                          password=os.getenv("REDIS_PASS"))
+    # First we need to clear our redis database
+    clear_vars(client)
     # Let's try to get the matchups and then see who won/lost each matchup
     num_matchups, active_rosters = set_matchups(client)
     # print(active_rosters)
@@ -345,7 +347,7 @@ def get_week():
 def update_week():
     client = redis.Redis(host="10.10.10.1", port=6379, db=5,
                          password=os.getenv("REDIS_PASS"))
-    client.incr("fantasy_week")
+    client.set("fantasy_week", "1")
     week = int(client.get('fantasy_week'))
     print(f"We are now on week {week} for fantasy football.")
 
@@ -407,9 +409,7 @@ def set_roster_data():
                     client.hset(user, 'losses', losses)
 
 
-def clear_vars():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=5,
-                         password=os.getenv("REDIS_PASS"))
+def clear_vars(client):
     league = get_specific_league()
     total_rosters = league["total_rosters"]
     i = 1
@@ -430,14 +430,12 @@ def clear_vars():
 
 
 def set_user_list():
-    users = get_user_in_league()
+    users = get_league_rosters()
     users_list = []
+    i = 0
     for user in users:
-        # print(user)
-        for key, value in user.items():
-            if key == 'user_id':
-                users_list.append(value)
-    # print(users_list)
+        i += 1
+        users_list.append(user["owner_id"])
     return users_list
 
 
@@ -475,6 +473,8 @@ def get_owner_id(roster_id):
 
 
 def get_team_name(id):
+    if id == "452917434727264256":
+        return "Michigan"
     team_name = "unknown"
     flag = False
     users = get_user_in_league()
@@ -524,7 +524,8 @@ def tweet_scores(client, num_matchups):
     beginning = f"NorthEast - week {week} results: \n\n"
     full_tweet = beginning + full_tweet + "\n#BOTS2020"
     num_tweets = math.ceil(len(full_tweet) / 274)
-    send_tweet(full_tweet, 1, num_tweets)
+    # send_tweet(full_tweet, 1, num_tweets)
+    print(full_tweet)
 
 
 ########## Twitter API Functions ###########
@@ -553,9 +554,7 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-set_roster_data()
-set_standings()
-set_point_leaders()
+weekly_scores()
 print(time.ctime())
 
 schedule.every().monday.at("02:01").do(update_week)

@@ -103,9 +103,9 @@ def set_standings():
         client = redis.Redis(host="10.10.10.1", port=6379, db=2,
                              password=os.getenv("REDIS_PASS"))
         team_name = get_team_name(key)
-        if team_name in teams:
-            continue
-        teams.append(team_name)
+        # if team_name in teams:
+        #     continue
+        # teams.append(team_name)
         losses = client.hget(key, "losses")
         if losses:
             losses = int(losses)
@@ -183,6 +183,7 @@ def set_point_leaders():
                          password=os.getenv("REDIS_PASS"))
     for key, value in standings_dict.items():
         team_name = get_team_name(key)
+        # print(team_name)
         if team_name in teams:
             continue
         teams.append(team_name)
@@ -345,7 +346,7 @@ def get_week():
 def update_week():
     client = redis.Redis(host="10.10.10.1", port=6379, db=2,
                          password=os.getenv("REDIS_PASS"))
-    client.incr("fantasy_week")
+    client.set("fantasy_week", "1")
     week = int(client.get('fantasy_week'))
     print(f"We are now on week {week} for fantasy football.")
 
@@ -371,7 +372,7 @@ def set_matchups(client):
                 client.hset(roster, "matchup", value)
                 match = "matchup_" + str(value)
                 client.sadd(match, roster)
-        #
+        
     print(f"There are {num_matchups} different matchups this week.")
     # Now I have the matchups saved within redis database
     return num_matchups, active_rosters
@@ -429,16 +430,41 @@ def clear_vars():
 ########## Helper Functions ###########
 
 
+# def set_user_list():
+#     users = get_user_in_league()
+#     users_list = []
+#     for user in users:
+#         # print(user)
+#         for key, value in user.items():
+#             if key == 'user_id':
+#                 users_list.append(value)
+#     # print(users_list)
+#     return users_list
+
+
 def set_user_list():
-    users = get_user_in_league()
+    users = get_league_rosters()
     users_list = []
+    i = 0
     for user in users:
-        # print(user)
-        for key, value in user.items():
-            if key == 'user_id':
-                users_list.append(value)
-    # print(users_list)
+        i += 1
+        users_list.append(user["owner_id"])
     return users_list
+    # return users_list
+    # {   'taxi': None, 
+    #     'starters': ['6770', '3164', '4199', '4131', '1689', '2449', '515', '6130', '2749', '59', 'GB'], 
+    #     'settings': {'wins': 0, 'waiver_position': 8, 'waiver_budget_used': 0, 'total_moves': 0, 'ties': 0, 'losses': 0, 'fpts': 0}, 
+    #     'roster_id': 11, 
+    #     'reserve': None, 
+    #     'players': ['1689', '2331', '2449', '2749', '3164', '333', '4131', '4199', '4973', '515', '5185', '59', '5955', '6130', '6156', '6768', '6770', '6801', '6828', 'GB'], 
+    #     'player_map': None, 
+    #     'owner_id': '435547320281460736', 
+    #     'metadata': {
+    #                     'allow_pn_scoring': 'on'
+    #                 }, 
+    #     'league_id': '589203992786018304', 
+    #     'co_owners': None
+    # }
 
 
 def get_matchups(client, active_rosters):
@@ -446,8 +472,6 @@ def get_matchups(client, active_rosters):
     total_rosters = 0
     total_rosters = league["total_rosters"]
 
-    # if key == 'total_rosters':
-    #     total_rosters = value
     i = 1
     for i in range(total_rosters+1):
         roster_id = "roster_" + str(i)
@@ -475,6 +499,9 @@ def get_owner_id(roster_id):
 
 
 def get_team_name(id):
+    if id == "435547320281460736":
+        team_name = "Team FatLucy27"
+        return team_name
     team_name = "unknown"
     flag = False
     users = get_user_in_league()
@@ -524,7 +551,8 @@ def tweet_scores(client, num_matchups):
     beginning = f"Southeast - week {week} results: \n\n"
     full_tweet = beginning + full_tweet + "\n#BOTS2020"
     num_tweets = math.ceil(len(full_tweet) / 274)
-    send_tweet(full_tweet, 1, num_tweets)
+    # send_tweet(full_tweet, 1, num_tweets)
+    print(full_tweet)
 
 
 ########## Twitter API Functions ###########
@@ -553,7 +581,6 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-set_roster_data()
 set_standings()
 set_point_leaders()
 print(time.ctime())
