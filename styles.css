@@ -81,7 +81,7 @@ body {
     align-items: center;
     min-height: 4rem;
     text-align: right;
-    color: #f2f2f2;
+    /* color: #f2f2f2; */
     z-index: 2;
     transition: all .1s linear;
 }
@@ -108,15 +108,6 @@ body {
 
 .nav-item:hover:after {
     opacity: 1;
-}
-
-.nav-item-twitter {
-    position: absolute;
-    left: 0;
-    display: inline-block;
-    font-family: Comfortaa, sans-serif;
-    font-size: 15px;
-    margin-left: 10px;
 }
 
 #pic {
