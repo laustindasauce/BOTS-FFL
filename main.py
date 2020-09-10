@@ -81,6 +81,7 @@ def set_standings():
     standings_dict = {k: v for k, v in sorted(
         standings_dict.items(), key=lambda item: item[1], reverse=True)}
     combined_status = ""
+    last = 0
     i = 0
     repeat = 1
     for key, value in standings_dict.items():
@@ -135,6 +136,7 @@ def set_point_leaders():
     standings_dict = {k: v for k, v in sorted(
         standings_dict.items(), key=lambda item: item[1], reverse=True)}
     combined_status = ""
+    last = 0
     i = 0
     repeat = 1
     for key, value in standings_dict.items():
@@ -280,6 +282,7 @@ def get_week():
 def update_week():
     client = redis.Redis(host="10.10.10.1", port=6379,
                          password=os.getenv("REDIS_PASS"))
+    client.set('fantasy_week', "0")
     week = int(client.get('fantasy_week')) + 1
     client.set('fantasy_week', str(week))
     print(f"We are now on week {week} for fantasy football.")
@@ -293,19 +296,17 @@ def set_matchups(client):
     # Client hash example ('roster_id', 'points', '100')
     # Client hash example ('roster_id', 'matchup', '2')
     for matchup in matchups:
-        for key, value in matchup.items():
-            if key == 'roster_id':
-                roster = "roster_" + str(value)
-                active_rosters.append(roster)
-            elif key == 'points':
-                client.hset(roster, "points", str(int(value)))
-            elif key == 'matchup_id':
-                if value > num_matchups:
-                    num_matchups = value
-                client.hset(roster, "matchup", value)
-                match = "matchup_" + str(value)
-                client.sadd(match, roster)
-        # 
+        roster = matchup["roster_id"]
+        roster = "roster_" + str(roster)
+        active_rosters.append(roster)
+        client.hset(roster, "points", matchup["points"])
+        matchup_id = matchup["matchup_id"]
+        if matchup_id > num_matchups:
+            num_matchups = matchup_id
+        client.hset(roster, "matchup", str(matchup_id))
+        match = "matchup_" + str(matchup_id)
+        client.sadd(match, roster)
+
     print(f"There are {num_matchups} different matchups this week.")
     # Now I have the matchups saved within redis database
     return num_matchups, active_rosters
@@ -321,24 +322,13 @@ def set_roster_data():
     USERS_LIST = set_user_list()
     rosters = get_league_rosters()
 
-    for user in USERS_LIST:
-        fpts = 0
-        wins = 0
-        losses = 0
-        for roster in rosters:
-            for key, value in roster.items():
-                if key == "settings":
-                    for name, val in value.items():
-                        if name == "fpts":
-                            fpts = val
-                        elif name == "wins":
-                            wins = val
-                        elif name == "losses":
-                            losses = val
-                elif key == "owner_id" and value == user:
-                    client.hset(user, 'fpts', fpts)
-                    client.hset(user, 'wins', wins)
-                    client.hset(user, 'losses', losses)
+    for roster in rosters:
+        value = roster["settings"]
+        if roster["owner_id"] in USERS_LIST:
+            client.hset(roster["owner_id"], 'fpts', value["fpts"])
+            client.hset(roster["owner_id"], 'wins', value["wins"])
+            client.hset(roster["owner_id"], 'losses', value["losses"])
+        print(value["fpts"])
 
 
 def clear_vars():
@@ -440,16 +430,22 @@ def tweet_scores(client, num_matchups):
             points = client.hget(member, 'points').decode("utf-8")
             if i % 2 != 0:
                 first = team_name
-                first_points = points
+                first_points = float(points)
             else:
                 second = team_name
-                second_points = points
-                if int(first_points) > int(second_points):
-                    tweet = first + " def. " + second + ": " + first_points + " - " + second_points + "\n\n"
-                elif int(first_points) < int(second_points):
-                    tweet = second + " def. " + first + ": " + second_points + " - " + first_points + "\n\n"
+                second_points = float(points)
+                print(float(points))
+                if first_points > second_points:
+                    tweet = first + " def. " + second + ": " + \
+                        str(int(first_points)) + " - " + str(int(second_points)) + "\n\n"
+
+                elif first_points < second_points:
+                    tweet = second + " def. " + first + ": " + \
+                        str(int(second_points)) + " - " + str(int(first_points)) + "\n\n"
+
                 else:
                     tweet = first + " & " + second + " tied: " + first_points + " - " + second_points + "\n\n"
+
         full_tweet = full_tweet + tweet
     week = get_week()
     beginning = f"Week {week} results: \n\n"
@@ -482,13 +478,9 @@ def follow_followers():
 
 ########## Scheduler ###########
 
-# if __name__ == "__main__":
-#     update_week()
-#     clear_vars()
-#     set_roster_data()
-#     set_point_leaders()
-#     weekly_scores()
-#     set_standings()
+if __name__ == "__main__":
+    clear_vars()
+    weekly_scores()
 
 print(time.ctime())
 
