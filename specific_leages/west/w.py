@@ -546,6 +546,7 @@ schedule.every().monday.at("03:03").do(clear_vars)
 schedule.every().tuesday.at("06:03").do(set_roster_data)
 schedule.every().tuesday.at("08:03").do(weekly_scores)
 schedule.every().tuesday.at("14:03").do(set_standings)
+schedule.every().day.at("15:00").do(set_point_leaders)
 
 
 while True:
