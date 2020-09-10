@@ -357,23 +357,20 @@ def set_matchups(client):
     num_matchups = 0
     roster = ""
     active_rosters = []
-
+    # Client hash example ('roster_id', 'points', '100')
+    # Client hash example ('roster_id', 'matchup', '2')
     for matchup in matchups:
-        for key, value in matchup.items():
-            if key == 'roster_id':
-                roster = "roster_" + str(value)
-                active_rosters.append(roster)
-            elif key == 'points':
-                if not value:
-                    value = "0"
-                client.hset(roster, "points", str(int(value)))
-            elif key == 'matchup_id':
-                if value > num_matchups:
-                    num_matchups = value
-                client.hset(roster, "matchup", value)
-                match = "matchup_" + str(value)
-                client.sadd(match, roster)
-        #
+        roster = matchup["roster_id"]
+        roster = "roster_" + str(roster)
+        active_rosters.append(roster)
+        client.hset(roster, "points", matchup["points"])
+        matchup_id = matchup["matchup_id"]
+        if matchup_id > num_matchups:
+            num_matchups = matchup_id
+        client.hset(roster, "matchup", str(matchup_id))
+        match = "matchup_" + str(matchup_id)
+        client.sadd(match, roster)
+
     print(f"There are {num_matchups} different matchups this week.")
     # Now I have the matchups saved within redis database
     return num_matchups, active_rosters
@@ -489,19 +486,22 @@ def tweet_scores(client, num_matchups):
             points = client.hget(member, 'points').decode("utf-8")
             if i % 2 != 0:
                 first = team_name
-                first_points = points
+                first_points = float(points)
             else:
                 second = team_name
-                second_points = points
-                if int(first_points) > int(second_points):
+                second_points = float(points)
+                print(float(points))
+                if first_points > second_points:
                     tweet = first + " def. " + second + ": " + \
-                        first_points + " - " + second_points + "\n\n"
-                elif int(first_points) < int(second_points):
+                        str(int(first_points)) + " - " + str(int(second_points)) + "\n\n"
+
+                elif first_points < second_points:
                     tweet = second + " def. " + first + ": " + \
-                        second_points + " - " + first_points + "\n\n"
+                        str(int(second_points)) + " - " + str(int(first_points)) + "\n\n"
+
                 else:
-                    tweet = first + " & " + second + " tied: " + \
-                        first_points + " - " + second_points + "\n\n"
+                    tweet = first + " & " + second + " tied: " + first_points + " - " + second_points + "\n\n"
+
         full_tweet = full_tweet + tweet
     week = get_week()
     beginning = f"NorthEast - week {week} results: \n\n"
