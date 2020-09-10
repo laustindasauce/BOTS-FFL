@@ -256,8 +256,8 @@ def set_standings():
     beginning = f"Southeast - week {week} standings: \n\n"
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
-    # send_tweet(combined_status, 1, num_tweets)
-    print(combined_status)
+    send_tweet(combined_status, 1, num_tweets)
+    # print(combined_status)
 
 
 def set_point_leaders():
@@ -327,8 +327,8 @@ def set_point_leaders():
     beginning = f"Southeast - total points through week {week}: \n\n"
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
-    # send_tweet(combined_status, 1, num_tweets)
-    print(combined_status)
+    send_tweet(combined_status, 1, num_tweets)
+    # print(combined_status)
 
 
 ########## Redis Functions ###########
@@ -502,7 +502,6 @@ def tweet_scores(client, num_matchups):
             else:
                 second = team_name
                 second_points = float(points)
-                print(float(points))
                 if first_points > second_points:
                     tweet = first + " def. " + second + ": " + \
                         str(int(first_points)) + " - " + str(int(second_points)) + "\n\n"
@@ -519,8 +518,8 @@ def tweet_scores(client, num_matchups):
     beginning = f"Southeast - week {week} results: \n\n"
     full_tweet = beginning + full_tweet + "\n#BOTS2020"
     num_tweets = math.ceil(len(full_tweet) / 274)
-    # send_tweet(full_tweet, 1, num_tweets)
-    print(full_tweet)
+    send_tweet(full_tweet, 1, num_tweets)
+    # print(full_tweet)
 
 
 ########## Twitter API Functions ###########
