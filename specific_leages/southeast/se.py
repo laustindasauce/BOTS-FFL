@@ -9,7 +9,7 @@ import tweepy
 
 '''
 Environment Variables: USER_ID, LEAGUE_ID, REDIS_PASS, CONSUMER_KEY, CONSUMER_SECRET, KEY, 
-                        SECRET, NORTHEAST, SOUTHEAST, MIDWEST, WEST
+                        SECRET, SOUTHEAST
 '''
 ########## OS Environment Variables ###########
 
@@ -557,10 +557,11 @@ def send_tweet(message, num, total):
 ########## Scheduler ###########
 print(time.ctime())
 
-schedule.every().monday.at("02:02").do(update_week)
-schedule.every().monday.at("03:02").do(clear_vars)
-schedule.every().tuesday.at("06:02").do(set_roster_data)
+schedule.every().monday.at("02:00").do(update_week)
+schedule.every().monday.at("03:00").do(clear_vars)
+schedule.every().tuesday.at("06:00").do(set_roster_data)
 schedule.every().tuesday.at("08:01").do(weekly_scores)
+schedule.every().tuesday.at("16:01").do(set_standings)
 schedule.every().day.at("18:00").do(set_point_leaders)
 schedule.every().day.at("01:00").do(set_point_leaders)
 schedule.every().sunday.at("14:00").do(set_point_leaders)
