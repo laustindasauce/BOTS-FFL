@@ -341,10 +341,17 @@ def get_week():
     return int(client.get('fantasy_week'))
 
 
+def clear_week():
+    client = redis.Redis(host="10.10.10.1", port=6379, db=2,
+                         password=os.getenv("REDIS_PASS"))
+    client.delete("fantasy_week")
+    print(client.get("fantasy_week"))
+
+
 def update_week():
     client = redis.Redis(host="10.10.10.1", port=6379, db=2,
                          password=os.getenv("REDIS_PASS"))
-    client.set("fantasy_week", "1")
+    client.incr("fantasy_week")
     week = int(client.get('fantasy_week'))
     print(f"We are now on week {week} for fantasy football.")
 
@@ -548,8 +555,6 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-set_standings()
-set_point_leaders()
 print(time.ctime())
 
 schedule.every().monday.at("02:02").do(update_week)
