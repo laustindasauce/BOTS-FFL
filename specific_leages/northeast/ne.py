@@ -53,6 +53,122 @@ USER_IN_LEAGUE = f"{BASE_URL}/v1/league/{league}/users"
 HEADERS = {'USER:': user, 'LEAGUE': league}
 
 
+########## Sleeper API Functions ###########
+
+
+def get_user():
+    r = requests.get(USER)
+    return json.loads(r.content)
+
+
+'''
+{
+    "username": "sleeperuser",
+    "user_id": "12345678",
+    "display_name": "SleeperUser",
+    "avatar": "cc12ec49965eb7856f84d71cf85306af"
+}
+'''
+
+
+def get_specific_league():
+    r = requests.get(SPECIFIC_LEAGUE)
+    return json.loads(r.content)
+
+
+'''
+{
+  "total_rosters": 12,
+  "status": "in_season",
+  "sport": "nfl",
+  "settings": { settings object },
+  "season_type": "regular",
+  "season": "2018",
+  "scoring_settings": { scoring_settings object },
+  "roster_positions": [ roster positions array ],
+  "previous_league_id": "198946952535085056",
+  "name": "Sleeperbot Dynasty",
+  "league_id": "289646328504385536",
+  "draft_id": "289646328508579840",
+  "avatar": "efaefa889ae24046a53265a3c71b8b64"
+}
+'''
+
+
+def get_league_rosters():
+    r = requests.get(LEAGUE_ROSTERS)
+    return json.loads(r.content)
+
+
+'''
+[
+    {
+        "starters": ["2307", "2257", "4034", "147", "642", "4039", "515", "4149", "DET"],
+        "settings": {
+            "wins": 5,
+            "waiver_position": 7,
+            "waiver_budget_used": 0,
+            "total_moves": 0,
+            "ties": 0,
+            "losses": 9,
+            "fpts_decimal": 78,
+            "fpts_against_decimal": 32,
+            "fpts_against": 1670,
+            "fpts": 1617
+        },
+        "roster_id": 1,
+        "reserve": [],
+        "players": ["1046", "138", "147", "2257", "DET"],
+        "owner_id": "188815879448829952",
+        "league_id": "206827432160788480"
+    },
+    ...
+]
+'''
+
+
+def get_user_in_league():
+    r = requests.get(USER_IN_LEAGUE)
+    return json.loads(r.content)
+
+
+'''
+[
+    {
+        "user_id": "<user_id>",
+        "username": "<username>",
+        "display_name": "<display_name>",
+        "avatar": "1233456789",
+        "metadata": {
+            "team_name": "Dezpacito"
+        },
+        "is_owner": true // is commissioner(there can be multiple commissioners)
+    },
+    ...
+]
+'''
+
+
+def get_league_matchups():
+    LEAGUE_MATCHUPS = f"{BASE_URL}/v1/league/{league}/matchups/" + \
+        str(get_week())
+    r = requests.get(LEAGUE_MATCHUPS)
+    return json.loads(r.content)
+
+
+'''
+[
+  {
+    "starters": ["421", "4035", "3242", "2133", "2449", "4531", "2257", "788", "PHI"],
+    "roster_id": 1,
+    "players": ["1352", "1387", "2118", "2133", "2182", "223", "2319", "2449", "3208", "4035", "421", "4881", "4892", "788", "CLE"],
+    "matchup_id": 2
+  },
+  ...
+]
+'''
+
+
 ########## Main Functions ###########
 
 
@@ -218,121 +334,6 @@ def set_point_leaders():
     # send_tweet(combined_status, 1, num_tweets)
     print(combined_status)
     
-
-########## Sleeper API Functions ###########
-
-
-def get_user():
-    r = requests.get(USER)
-    return json.loads(r.content)
-
-
-'''
-{
-    "username": "sleeperuser",
-    "user_id": "12345678",
-    "display_name": "SleeperUser",
-    "avatar": "cc12ec49965eb7856f84d71cf85306af"
-}
-'''
-
-
-def get_specific_league():
-    r = requests.get(SPECIFIC_LEAGUE)
-    return json.loads(r.content)
-
-
-'''
-{
-  "total_rosters": 12,
-  "status": "in_season",
-  "sport": "nfl",
-  "settings": { settings object },
-  "season_type": "regular",
-  "season": "2018",
-  "scoring_settings": { scoring_settings object },
-  "roster_positions": [ roster positions array ],
-  "previous_league_id": "198946952535085056",
-  "name": "Sleeperbot Dynasty",
-  "league_id": "289646328504385536",
-  "draft_id": "289646328508579840",
-  "avatar": "efaefa889ae24046a53265a3c71b8b64"
-}
-'''
-
-
-def get_league_rosters():
-    r = requests.get(LEAGUE_ROSTERS)
-    return json.loads(r.content)
-
-
-'''
-[
-    {
-        "starters": ["2307", "2257", "4034", "147", "642", "4039", "515", "4149", "DET"],
-        "settings": {
-            "wins": 5,
-            "waiver_position": 7,
-            "waiver_budget_used": 0,
-            "total_moves": 0,
-            "ties": 0,
-            "losses": 9,
-            "fpts_decimal": 78,
-            "fpts_against_decimal": 32,
-            "fpts_against": 1670,
-            "fpts": 1617
-        },
-        "roster_id": 1,
-        "reserve": [],
-        "players": ["1046", "138", "147", "2257", "DET"],
-        "owner_id": "188815879448829952",
-        "league_id": "206827432160788480"
-    },
-    ...
-]
-'''
-
-
-def get_user_in_league():
-    r = requests.get(USER_IN_LEAGUE)
-    return json.loads(r.content)
-
-
-'''
-[
-    {
-        "user_id": "<user_id>",
-        "username": "<username>",
-        "display_name": "<display_name>",
-        "avatar": "1233456789",
-        "metadata": {
-            "team_name": "Dezpacito"
-        },
-        "is_owner": true // is commissioner(there can be multiple commissioners)
-    },
-    ...
-]
-'''
-
-
-def get_league_matchups():
-    LEAGUE_MATCHUPS = f"{BASE_URL}/v1/league/{league}/matchups/" + \
-        str(get_week())
-    r = requests.get(LEAGUE_MATCHUPS)
-    return json.loads(r.content)
-
-
-'''
-[
-  {
-    "starters": ["421", "4035", "3242", "2133", "2449", "4531", "2257", "788", "PHI"],
-    "roster_id": 1,
-    "players": ["1352", "1387", "2118", "2133", "2182", "223", "2319", "2449", "3208", "4035", "421", "4881", "4892", "788", "CLE"],
-    "matchup_id": 2
-  },
-  ...
-]
-'''
 
 ########## Redis Functions ###########
 
