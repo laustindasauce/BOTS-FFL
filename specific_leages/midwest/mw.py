@@ -321,12 +321,12 @@ def set_point_leaders():
         point_leaders = "mw_points_" + str(i)
         client.set(point_leaders, status)
         last = int(value)
-        combined_status = combined_status + status + "\n"
-    week = get_week()
-    beginning = f"Midwest - point leaders through week {week}: \n\n"
-    combined_status = beginning + combined_status + "\n#BOTS2020"
-    num_tweets = math.ceil(len(combined_status) / 274)
-    send_tweet(combined_status, 1, num_tweets)
+    #     combined_status = combined_status + status + "\n"
+    # week = get_week()
+    # beginning = f"Midwest - point leaders through week {week}: \n\n"
+    # combined_status = beginning + combined_status + "\n#BOTS2020"
+    # num_tweets = math.ceil(len(combined_status) / 274)
+    # send_tweet(combined_status, 1, num_tweets)
     # print(combined_status)
     
 
@@ -538,11 +538,11 @@ set_standings()
 set_point_leaders()
 print(time.ctime())
 
-schedule.every().monday.at("02:04").do(update_week)
-schedule.every().tuesday.at("08:04").do(weekly_scores)
-schedule.every().monday.at("05:04").do(clear_vars)
-schedule.every().tuesday.at("06:04").do(set_roster_data)
-schedule.every().tuesday.at("12:04").do(set_standings)
+schedule.every().monday.at("02:02").do(update_week)
+schedule.every().monday.at("03:02").do(clear_vars)
+schedule.every().tuesday.at("06:02").do(set_roster_data)
+schedule.every().tuesday.at("08:02").do(weekly_scores)
+schedule.every().tuesday.at("14:02").do(set_standings)
 
 
 while True:
