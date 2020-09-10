@@ -53,170 +53,6 @@ USER_IN_LEAGUE = f"{BASE_URL}/v1/league/{league}/users"
 HEADERS = {'USER:': user, 'LEAGUE': league}
 
 
-########## Main Functions ###########
-
-
-def weekly_scores():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
-                         password=os.getenv("REDIS_PASS"))
-    # Let's try to get the matchups and then see who won/lost each matchup
-    num_matchups, active_rosters = set_matchups(client)
-    # print(active_rosters)
-    get_matchups(client, active_rosters)
-    tweet_scores(client, num_matchups)
-
-
-def set_standings():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
-                         password=os.getenv("REDIS_PASS"))
-    USERS_LIST = set_user_list()
-
-    # I think I want to use a dictionary here with the user and their wins
-    standings_dict = {}
-    most_wins = 0
-    leaders = 0
-    for user in USERS_LIST:
-        wins = client.hget(str(user), 'wins')
-        if wins:
-            standings_dict[user] = int(wins)
-            if int(wins) > most_wins:
-                most_wins = int(wins)
-                leaders = 1
-            elif int(wins) == most_wins:
-                most_wins = int(wins)
-                leaders += 1
-        else:
-            standings_dict[user] = 0
-            if 0 == most_wins:
-                most_wins = 0
-                leaders += 1
-    # Now that I have a dictionary with each user: wins => let's order the dictionary with lambda expression
-    standings_dict = {k: v for k, v in sorted(
-        standings_dict.items(), key=lambda item: item[1], reverse=True)}
-    # Initialize combined status var
-    combined_status = ""
-    i = 0
-    repeat = 1
-    last = 0
-    teams = []
-    for key, value in standings_dict.items():
-        client = redis.Redis(host="10.10.10.1", port=6379, db=3,
-                             password=os.getenv("REDIS_PASS"))
-        team_name = get_team_name(key)
-        if team_name in teams:
-            continue
-        teams.append(team_name)
-        losses = client.hget(key, "losses")
-        if losses:
-            losses = int(losses)
-        else:
-            losses = 0
-        i += 1
-        if i <= leaders and leaders == 1:
-            status = f"1st: {team_name}     {value}-{losses}"
-        elif i <= leaders and leaders > 1:
-            status = f"1st: {team_name}     {value}-{losses}"
-        elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}     {value}-{losses}"
-        elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}     {value}-{losses}"
-        elif (i - 3) % 10 == 0 and last > int(value):
-            status = f"3rd: {team_name}     {value}-{losses}"
-        elif (i - 3) % 10 == 0 and last == int(value):
-            status = f"3rd: {team_name}     {value}-{losses}"
-        elif last > int(value):
-            status = f"{i}th: {team_name}     {value}-{losses}"
-            repeat = 1
-        else:
-            status = f"{i - repeat}th {team_name}     {value}-{losses}"
-            repeat += 1
-        client = redis.Redis(host="10.10.10.1", port=6379, db=0,
-                             password=os.getenv("REDIS_PASS"))
-        standings = "w_standings_" + str(i)
-        client.set(standings, status)
-        last = int(value)
-        combined_status = combined_status + status + "\n"
-    week = get_week()
-    beginning = f"West - week {week} standings: \n\n"
-    combined_status = beginning + combined_status + "\n#BOTS2020"
-    num_tweets = math.ceil(len(combined_status) / 274)
-    # send_tweet(combined_status, 1, num_tweets)
-    print(combined_status)
-
-
-def set_point_leaders():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
-                         password=os.getenv("REDIS_PASS"))
-    USERS_LIST = set_user_list()
-
-    # I think I want to use a dictionary here with the user and their wins
-    standings_dict = {}
-    most_wins = 0
-    leaders = 0
-    standings_dict = {}
-    most_points = 0
-    leaders = 0
-    for user in USERS_LIST:
-        points = client.hget(str(user), 'fpts')
-        if points:
-            standings_dict[user] = int(points)
-            if int(points) > most_points:
-                most_points = int(points)
-                leaders = 1
-            elif int(points) == most_points:
-                most_wins = int(points)
-                leaders += 1
-        else:
-            standings_dict[user] = 0
-            if 0 >= most_points:
-                most_points = 0
-                leaders += 1
-    # Now that I have a dictionary with each user: wins ,,, let's order the dictionary
-    standings_dict = {k: v for k, v in sorted(
-        standings_dict.items(), key=lambda item: item[1], reverse=True)}
-    combined_status = ""
-    i = 0
-    repeat = 1
-    last = 0
-    teams = []
-    client = redis.Redis(host="10.10.10.1", port=6379, db=0,
-                         password=os.getenv("REDIS_PASS"))
-    for key, value in standings_dict.items():
-        team_name = get_team_name(key)
-        if team_name in teams:
-            continue
-        teams.append(team_name)
-        i += 1
-        if i <= leaders and leaders == 1:
-            status = f"1st: {team_name}:     {value}"
-        elif i <= leaders and leaders > 1:
-            status = f"1st: {team_name}:     {value}"
-        elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}:     {value}"
-        elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}:     {value}"
-        elif (i - 3) % 10 == 0 and last > int(value):
-            status = f"3rd: {team_name}:     {value}"
-        elif (i - 3) % 10 == 0 and last == int(value):
-            status = f"3rd: {team_name}:     {value}"
-        elif last > int(value):
-            status = f"{i}th: {team_name}:     {value}"
-            repeat = 1
-        else:
-            status = f"{i - repeat}th: {team_name}     {value}"
-            repeat += 1
-        point_leaders = "w_points_" + str(i)
-        client.set(point_leaders, status)
-        last = int(value)
-        combined_status = combined_status + status + "\n"
-    week = get_week()
-    beginning = f"West - total points through week {week}: \n\n"
-    combined_status = beginning + combined_status + "\n#BOTS2020"
-    num_tweets = math.ceil(len(combined_status) / 274)
-    # send_tweet(combined_status, 1, num_tweets)
-    print(combined_status)
-
-
 ########## Sleeper API Functions ###########
 
 
@@ -332,6 +168,171 @@ def get_league_matchups():
 ]
 '''
 
+
+########## Main Functions ###########
+
+
+def weekly_scores():
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
+                         password=os.getenv("REDIS_PASS"))
+    # Let's try to get the matchups and then see who won/lost each matchup
+    num_matchups, active_rosters = set_matchups(client)
+    # print(active_rosters)
+    get_matchups(client, active_rosters)
+    tweet_scores(client, num_matchups)
+
+
+def set_standings():
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
+                         password=os.getenv("REDIS_PASS"))
+    USERS_LIST = set_user_list()
+
+    # I think I want to use a dictionary here with the user and their wins
+    standings_dict = {}
+    most_wins = 0
+    leaders = 0
+    for user in USERS_LIST:
+        wins = client.hget(str(user), 'wins')
+        if wins:
+            standings_dict[user] = int(wins)
+            if int(wins) > most_wins:
+                most_wins = int(wins)
+                leaders = 1
+            elif int(wins) == most_wins:
+                most_wins = int(wins)
+                leaders += 1
+        else:
+            standings_dict[user] = 0
+            if 0 == most_wins:
+                most_wins = 0
+                leaders += 1
+    # Now that I have a dictionary with each user: wins => let's order the dictionary with lambda expression
+    standings_dict = {k: v for k, v in sorted(
+        standings_dict.items(), key=lambda item: item[1], reverse=True)}
+    # Initialize combined status var
+    combined_status = ""
+    i = 0
+    repeat = 1
+    last = 0
+    teams = []
+    for key, value in standings_dict.items():
+        client = redis.Redis(host="10.10.10.1", port=6379, db=3,
+                             password=os.getenv("REDIS_PASS"))
+        team_name = get_team_name(key)
+        if team_name in teams:
+            continue
+        teams.append(team_name)
+        losses = client.hget(key, "losses")
+        if losses:
+            losses = int(losses)
+        else:
+            losses = 0
+        i += 1
+        if i <= leaders and leaders == 1:
+            status = f"1st: {team_name} ({value}-{losses})"
+        elif i <= leaders and leaders > 1:
+            status = f"1st: {team_name} ({value}-{losses})"
+        elif (i - 2) % 10 == 0 and last > int(value):
+            status = f"2nd: {team_name} ({value}-{losses})"
+        elif (i - 2) % 10 == 0 and last > int(value):
+            status = f"2nd: {team_name} ({value}-{losses})"
+        elif (i - 3) % 10 == 0 and last > int(value):
+            status = f"3rd: {team_name} ({value}-{losses})"
+        elif (i - 3) % 10 == 0 and last == int(value):
+            status = f"3rd: {team_name} ({value}-{losses})"
+        elif last > int(value):
+            status = f"{i}th: {team_name} ({value}-{losses})"
+            repeat = 1
+        else:
+            status = f"{i - repeat}th {team_name} ({value}-{losses})"
+            repeat += 1
+        client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                             password=os.getenv("REDIS_PASS"))
+        standings = "w_standings_" + str(i)
+        client.set(standings, status)
+        last = int(value)
+        combined_status = combined_status + status + "\n"
+    week = get_week()
+    beginning = f"West - week {week} standings: \n\n"
+    combined_status = beginning + combined_status + "\n#BOTS2020"
+    num_tweets = math.ceil(len(combined_status) / 274)
+    # send_tweet(combined_status, 1, num_tweets)
+    print(combined_status)
+
+
+def set_point_leaders():
+    client = redis.Redis(host="10.10.10.1", port=6379, db=3,
+                         password=os.getenv("REDIS_PASS"))
+    USERS_LIST = set_user_list()
+
+    # I think I want to use a dictionary here with the user and their wins
+    standings_dict = {}
+    most_wins = 0
+    leaders = 0
+    standings_dict = {}
+    most_points = 0
+    leaders = 0
+    for user in USERS_LIST:
+        points = client.hget(str(user), 'fpts')
+        if points:
+            standings_dict[user] = int(points)
+            if int(points) > most_points:
+                most_points = int(points)
+                leaders = 1
+            elif int(points) == most_points:
+                most_wins = int(points)
+                leaders += 1
+        else:
+            standings_dict[user] = 0
+            if 0 >= most_points:
+                most_points = 0
+                leaders += 1
+    # Now that I have a dictionary with each user: wins ,,, let's order the dictionary
+    standings_dict = {k: v for k, v in sorted(
+        standings_dict.items(), key=lambda item: item[1], reverse=True)}
+    combined_status = ""
+    i = 0
+    repeat = 1
+    last = 0
+    teams = []
+    client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                         password=os.getenv("REDIS_PASS"))
+    for key, value in standings_dict.items():
+        team_name = get_team_name(key)
+        if team_name in teams:
+            continue
+        teams.append(team_name)
+        i += 1
+        if i <= leaders and leaders == 1:
+            status = f"1st: {team_name} ({value})"
+        elif i <= leaders and leaders > 1:
+            status = f"1st: {team_name} ({value})"
+        elif (i - 2) % 10 == 0 and last > int(value):
+            status = f"2nd: {team_name} ({value})"
+        elif (i - 2) % 10 == 0 and last > int(value):
+            status = f"2nd: {team_name} ({value})"
+        elif (i - 3) % 10 == 0 and last > int(value):
+            status = f"3rd: {team_name} ({value})"
+        elif (i - 3) % 10 == 0 and last == int(value):
+            status = f"3rd: {team_name} ({value})"
+        elif last > int(value):
+            status = f"{i}th: {team_name} ({value})"
+            repeat = 1
+        else:
+            status = f"{i - repeat}th: {team_name}     {value}"
+            repeat += 1
+        point_leaders = "w_points_" + str(i)
+        client.set(point_leaders, status)
+        last = int(value)
+        combined_status = combined_status + status + "\n"
+    week = get_week()
+    beginning = f"West - total points through week {week}: \n\n"
+    combined_status = beginning + combined_status + "\n#BOTS2020"
+    num_tweets = math.ceil(len(combined_status) / 274)
+    # send_tweet(combined_status, 1, num_tweets)
+    print(combined_status)
+
+
 ########## Redis Functions ###########
 
 
@@ -345,7 +346,7 @@ def get_week():
 def update_week():
     client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                          password=os.getenv("REDIS_PASS"))
-    client.incr("fantasy_week")
+    client.set("fantasy_week", "1")
     week = int(client.get('fantasy_week'))
     print(f"We are now on week {week} for fantasy football.")
 
@@ -387,24 +388,12 @@ def set_roster_data():
     USERS_LIST = set_user_list()
     rosters = get_league_rosters()
 
-    for user in USERS_LIST:
-        fpts = 0
-        wins = 0
-        losses = 0
-        for roster in rosters:
-            for key, value in roster.items():
-                if key == "settings":
-                    for name, val in value.items():
-                        if name == "fpts":
-                            fpts = val
-                        elif name == "wins":
-                            wins = val
-                        elif name == "losses":
-                            losses = val
-                elif key == "owner_id" and value == user:
-                    client.hset(user, 'fpts', fpts)
-                    client.hset(user, 'wins', wins)
-                    client.hset(user, 'losses', losses)
+    for roster in rosters:
+        value = roster["settings"]
+        if roster["owner_id"] in USERS_LIST:
+            client.hset(roster["owner_id"], 'fpts', value["fpts"])
+            client.hset(roster["owner_id"], 'wins', value["wins"])
+            client.hset(roster["owner_id"], 'losses', value["losses"])
 
 
 def clear_vars():
@@ -474,17 +463,14 @@ def get_owner_id(roster_id):
 
 def get_team_name(id):
     team_name = "unknown"
-    flag = False
     users = get_user_in_league()
     for user in users:
-        for key, value in user.items():
-            if key == 'user_id':
-                if value == id:
-                    flag = True
-            elif flag == True and key == 'metadata':
-                for name, val in value.items():
-                    if name == 'team_name':
-                        return val
+        if user["user_id"] == id:
+            metadata = user["metadata"]
+            try:
+                team_name = metadata["team_name"]
+            except:
+                team_name = "Team " + user["display_name"]
     return team_name  # If we get here just return the unknown team name
 
 
@@ -552,7 +538,6 @@ def send_tweet(message, num, total):
 
 ########## Scheduler ###########
 update_week()
-set_roster_data()
 set_standings()
 set_point_leaders()
 print(time.ctime())

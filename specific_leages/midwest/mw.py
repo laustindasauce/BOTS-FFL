@@ -113,22 +113,22 @@ def set_standings():
             losses = 0
         i += 1
         if i <= leaders and leaders == 1:
-            status = f"1st: {team_name}:     {value}-{losses}"
+            status = f"1st: {team_name} ({value}-{losses})"
         elif i <= leaders and leaders > 1:
-            status = f"1st: {team_name}:     {value}-{losses}"
+            status = f"1st: {team_name} ({value}-{losses})"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}:     {value}-{losses}"
+            status = f"2nd: {team_name} ({value}-{losses})"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}:     {value}-{losses}"
+            status = f"2nd: {team_name} ({value}-{losses})"
         elif (i - 3) % 10 == 0 and last > int(value):
-            status = f"3rd: {team_name}:     {value}-{losses}"
+            status = f"3rd: {team_name} ({value}-{losses})"
         elif (i - 3) % 10 == 0 and last == int(value):
-            status = f"3rd: {team_name}:     {value}-{losses}"
+            status = f"3rd: {team_name} ({value}-{losses})"
         elif last > int(value):
-            status = f"{i}th: {team_name}:     {value}-{losses}"
+            status = f"{i}th: {team_name} ({value}-{losses})"
             repeat = 1
         else:
-            status = f"{i - repeat}th: {team_name}     {value}-{losses}"
+            status = f"{i - repeat}th: {team_name} ({value}-{losses})"
             repeat += 1
         client = redis.Redis(host="10.10.10.1", port=6379, db=0,
                              password=os.getenv("REDIS_PASS"))
@@ -185,22 +185,22 @@ def set_point_leaders():
         teams.append(team_name)
         i += 1
         if i <= leaders and leaders == 1:
-            status = f"1st: {team_name}: {value}"
+            status = f"1st: {team_name} ({value})"
         elif i <= leaders and leaders > 1:
-            status = f"1st: {team_name}: {value}"
+            status = f"1st: {team_name} ({value})"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}: {value}"
+            status = f"2nd: {team_name} ({value})"
         elif (i - 2) % 10 == 0 and last > int(value):
-            status = f"2nd: {team_name}: {value}"
+            status = f"2nd: {team_name} ({value})"
         elif (i - 3) % 10 == 0 and last > int(value):
-            status = f"3rd: {team_name}: {value}"
+            status = f"3rd: {team_name} ({value})"
         elif (i - 3) % 10 == 0 and last == int(value):
-            status = f"3rd: {team_name}: {value}"
+            status = f"3rd: {team_name} ({value})"
         elif last > int(value):
-            status = f"{i}th: {team_name}: {value}"
+            status = f"{i}th: {team_name} ({value})"
             repeat = 1
         else:
-            status = f"{i - repeat}th: {team_name}: {value}"
+            status = f"{i - repeat}th: {team_name} ({value})"
             repeat += 1
         point_leaders = "mw_points_" + str(i)
         client.set(point_leaders, status)
@@ -384,24 +384,12 @@ def set_roster_data():
     USERS_LIST = set_user_list()
     rosters = get_league_rosters()
 
-    for user in USERS_LIST:
-        fpts = 0
-        wins = 0
-        losses = 0
-        for roster in rosters:
-            for key, value in roster.items():
-                if key == "settings":
-                    for name, val in value.items():
-                        if name == "fpts":
-                            fpts = val
-                        elif name == "wins":
-                            wins = val
-                        elif name == "losses":
-                            losses = val
-                elif key == "owner_id" and value == user:
-                    client.hset(user, 'fpts', fpts)
-                    client.hset(user, 'wins', wins)
-                    client.hset(user, 'losses', losses)
+    for roster in rosters:
+        value = roster["settings"]
+        if roster["owner_id"] in USERS_LIST:
+            client.hset(roster["owner_id"], 'fpts', value["fpts"])
+            client.hset(roster["owner_id"], 'wins', value["wins"])
+            client.hset(roster["owner_id"], 'losses', value["losses"])
 
 
 def clear_vars():
@@ -471,17 +459,14 @@ def get_owner_id(roster_id):
 
 def get_team_name(id):
     team_name = "unknown"
-    flag = False
     users = get_user_in_league()
     for user in users:
-        for key, value in user.items():
-            if key == 'user_id':
-                if value == id:
-                    flag = True
-            elif flag == True and key == 'metadata':
-                for name, val in value.items():
-                    if name == 'team_name':
-                        return val
+        if user["user_id"] == id:
+            metadata = user["metadata"]
+            try:
+                team_name = metadata["team_name"]
+            except:
+                team_name = "Team " + user["display_name"]
     return team_name  # If we get here just return the unknown team name
 
 
