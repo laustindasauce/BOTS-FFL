@@ -263,6 +263,7 @@ def set_standings():
 
 
 def set_point_leaders():
+    set_roster_data()
     client = redis.Redis(host="10.10.10.1", port=6379, db=5,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()

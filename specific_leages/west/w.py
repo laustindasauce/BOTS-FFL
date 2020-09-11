@@ -261,6 +261,7 @@ def set_standings():
 
 
 def set_point_leaders():
+    set_roster_data()
     client = redis.Redis(host="10.10.10.1", port=6379, db=3,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
@@ -324,13 +325,13 @@ def set_point_leaders():
         point_leaders = "w_points_" + str(i)
         client.set(point_leaders, status)
         last = int(value)
-    #     combined_status = combined_status + status + "\n"
-    # week = get_week()
-    # beginning = f"West - total points through week {week}: \n\n"
-    # combined_status = beginning + combined_status + "\n#BOTS2020"
+        combined_status = combined_status + status + "\n"
+    week = 1
+    beginning = f"West - total points through week {week}: \n\n"
+    combined_status = beginning + combined_status + "\n#BOTS2020"
     # num_tweets = math.ceil(len(combined_status) / 274)
     # send_tweet(combined_status, 1, num_tweets)
-    # print(combined_status)
+    print(combined_status)
 
 
 ########## Redis Functions ###########
