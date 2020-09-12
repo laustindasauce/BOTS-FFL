@@ -179,11 +179,41 @@ section h1 {
 }
 
 #title span {
-    font-size: 10px;
+    font-size: 16px;
+}
+
+#signup_catch {
+    margin: auto;
+    margin-top: 40px;
+    width: 100%;
+    text-align: center;
+    /* color: #C9011E; */
 }
 
 #title h1 {
     font-size: 30px;
+}
+
+.project-card-title {
+    position: relative;
+    height: auto;
+    width: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    color: white;
+    background: #042C68;
+    border-radius: 2rem;
+    transition: all .2s linear;
+    border: .1em solid transparent;
+}
+
+.project-card-title:hover {
+    -webkit-transform: scale(1.05);
+    transform: scale(1.05);
+    border: .15em solid #C9011E;
+    color: white;
 }
 
 .wrapper {
