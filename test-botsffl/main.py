@@ -257,8 +257,8 @@ def set_standings():
     beginning = f"{region} - week {week} standings: \n\n"
     combined_status = beginning + combined_status + "\n#BOTS2020"
     num_tweets = math.ceil(len(combined_status) / 274)
-    send_tweet(combined_status, 1, num_tweets)
-    # print(combined_status)
+    # send_tweet(combined_status, 1, num_tweets)
+    print(combined_status)
 
 
 def set_point_leaders():
@@ -322,13 +322,13 @@ def set_point_leaders():
         point_leaders = "mw_points_" + str(i)
         client.set(point_leaders, status)
         last = int(value)
-    #     combined_status = combined_status + status + "\n"
-    # week = get_week()
-    # beginning = f"{region} - point leaders through week {week}: \n\n"
-    # combined_status = beginning + combined_status + "\n#BOTS2020"
+        combined_status = combined_status + status + "\n"
+    week = get_week()
+    beginning = f"{region} - point leaders through week {week}: \n\n"
+    combined_status = beginning + combined_status + "\n#BOTS2020"
     # num_tweets = math.ceil(len(combined_status) / 274)
     # send_tweet(combined_status, 1, num_tweets)
-    # print(combined_status)
+    print(combined_status)
 
 
 ########## Redis Functions ###########
@@ -351,7 +351,7 @@ def clear_week():
 def update_week():
     client = redis.Redis(host="10.10.10.1", port=6379, db=10,
                          password=os.getenv("REDIS_PASS"))
-    client.incr("fantasy_week")
+    client.set("fantasy_week", "1")
     week = int(client.get('fantasy_week'))
     print(f"We are now on week {week} for fantasy football.")
 
@@ -393,9 +393,21 @@ def set_roster_data():
     for roster in rosters:
         value = roster["settings"]
         if roster["owner_id"] in USERS_LIST:
-            client.hset(roster["owner_id"], 'fpts', value["fpts"])
-            client.hset(roster["owner_id"], 'wins', value["wins"])
-            client.hset(roster["owner_id"], 'losses', value["losses"])
+            if not value["fpts"]:
+                val = 0
+            else:
+                val = value["fpts"]
+            client.hset(roster["owner_id"], 'fpts', val)
+            if not value["wins"]:
+                val = 0
+            else:
+                val = value["wins"]
+            client.hset(roster["owner_id"], 'wins', val)
+            if not value["losses"]:
+                val = 0
+            else:
+                val = value["losses"]
+            client.hset(roster["owner_id"], 'losses', val)
 
 
 def clear_vars():
@@ -515,8 +527,8 @@ def tweet_scores(client, num_matchups):
     beginning = f"{region} - week {week} results: \n\n"
     full_tweet = beginning + full_tweet + "\n#BOTS2020"
     num_tweets = math.ceil(len(full_tweet) / 274)
-    send_tweet(full_tweet, 1, num_tweets)
-    # print(full_tweet)
+    # send_tweet(full_tweet, 1, num_tweets)
+    print(full_tweet)
 
 
 ########## Twitter API Functions ###########
@@ -545,22 +557,11 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-print(time.ctime())
 
-schedule.every().monday.at("02:00").do(update_week)
-schedule.every().monday.at("03:00").do(clear_vars)
-schedule.every().tuesday.at("06:00").do(set_roster_data)
-schedule.every().tuesday.at("08:02").do(weekly_scores)
-schedule.every().tuesday.at("16:02").do(set_standings)
-schedule.every().day.at("18:00").do(set_point_leaders)
-schedule.every().day.at("01:00").do(set_point_leaders)
-schedule.every().sunday.at("14:00").do(set_point_leaders)
+if __name__ == "__main__":
+    USERS_LIST = set_user_list()
+    rosters = get_league_rosters()
 
-
-while True:
-    try:
-        schedule.run_pending()
-        time.sleep(1)
-    except Exception as identifier:
-        print(identifier)
-        time.sleep(1)
+    for roster in rosters:
+        print(roster, "\n\n")
+    print(time.ctime())
