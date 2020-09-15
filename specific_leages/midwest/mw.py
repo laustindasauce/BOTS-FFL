@@ -180,6 +180,8 @@ def weekly_scores():
     # print(active_rosters)
     get_matchups(client, active_rosters)
     tweet_scores(client, num_matchups)
+    set_standings_website()
+    set_point_leaders()
 
 
 def set_standings():
@@ -260,6 +262,77 @@ def set_standings():
     # print(combined_status)
 
 
+def set_standings_website():
+    client = redis.Redis(host="10.10.10.1", port=6379, db=4,
+                         password=os.getenv("REDIS_PASS"))
+    USERS_LIST = set_user_list()
+
+    # I think I want to use a dictionary here with the user and their wins
+    standings_dict = {}
+    most_wins = 0
+    leaders = 0
+    for user in USERS_LIST:
+        wins = client.hget(str(user), 'wins')
+        if wins:
+            standings_dict[user] = int(wins)
+            if int(wins) > most_wins:
+                most_wins = int(wins)
+                leaders = 1
+            elif int(wins) == most_wins:
+                most_wins = int(wins)
+                leaders += 1
+        else:
+            standings_dict[user] = 0
+            if 0 == most_wins:
+                most_wins = 0
+                leaders += 1
+    # Now that I have a dictionary with each user: wins => let's order the dictionary with lambda expression
+    standings_dict = {k: v for k, v in sorted(
+        standings_dict.items(), key=lambda item: item[1], reverse=True)}
+    # Initialize combined status var
+    combined_status = ""
+    i = 0
+    repeat = 1
+    last = 0
+    teams = []
+    for key, value in standings_dict.items():
+        client = redis.Redis(host="10.10.10.1", port=6379, db=4,
+                             password=os.getenv("REDIS_PASS"))
+        team_name = get_team_name(key)
+        if team_name in teams:
+            continue
+        teams.append(team_name)
+        losses = client.hget(key, "losses")
+        if losses:
+            losses = int(losses)
+        else:
+            losses = 0
+        i += 1
+        if i <= leaders and leaders == 1:
+            status = f"1st: {team_name} ({value}-{losses})"
+        elif i <= leaders and leaders > 1:
+            status = f"1st: {team_name} ({value}-{losses})"
+        elif (i - 2) % 10 == 0 and last > int(value):
+            status = f"2nd: {team_name} ({value}-{losses})"
+        elif (i - 2) % 10 == 0 and last > int(value):
+            status = f"2nd: {team_name} ({value}-{losses})"
+        elif (i - 3) % 10 == 0 and last > int(value):
+            status = f"3rd: {team_name} ({value}-{losses})"
+        elif (i - 3) % 10 == 0 and last == int(value):
+            status = f"3rd: {team_name} ({value}-{losses})"
+        elif last > int(value):
+            status = f"{i}th: {team_name} ({value}-{losses})"
+            repeat = 1
+        else:
+            status = f"{i - repeat}th {team_name} ({value}-{losses})"
+            repeat += 1
+        client = redis.Redis(host="10.10.10.1", port=6379, db=0,
+                             password=os.getenv("REDIS_PASS"))
+        standings = "mw_standings_" + str(i)
+        client.set(standings, status)
+        last = int(value)
+
+
 def set_point_leaders():
     set_roster_data()
     client = redis.Redis(host="10.10.10.1", port=6379, db=4,
@@ -305,9 +378,9 @@ def set_point_leaders():
             status = f"1st: {team_name} ({value})"
         elif i <= leaders and leaders > 1:
             status = f"1st: {team_name} ({value})"
-        elif (i - 2) % 10 == 0 and last > int(value):
+        elif (i - 2) % 10 == 0 and i < 10 and last > int(value):
             status = f"2nd: {team_name} ({value})"
-        elif (i - 2) % 10 == 0 and last > int(value):
+        elif (i - 2) % 10 == 0 and i < 10 and last > int(value):
             status = f"2nd: {team_name} ({value})"
         elif (i - 3) % 10 == 0 and last > int(value):
             status = f"3rd: {team_name} ({value})"
@@ -542,6 +615,7 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
+set_point_leaders()
 print(time.ctime())
 
 schedule.every().monday.at("02:00").do(update_week)
@@ -549,9 +623,6 @@ schedule.every().monday.at("03:00").do(clear_vars)
 schedule.every().tuesday.at("06:00").do(set_roster_data)
 schedule.every().tuesday.at("08:02").do(weekly_scores)
 schedule.every().tuesday.at("16:02").do(set_standings)
-schedule.every().day.at("18:00").do(set_point_leaders)
-schedule.every().day.at("01:00").do(set_point_leaders)
-schedule.every().sunday.at("14:00").do(set_point_leaders)
 
 
 while True:

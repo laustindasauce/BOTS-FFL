@@ -559,6 +559,9 @@ def send_tweet(message, num, total):
 ########## Scheduler ###########
 
 if __name__ == "__main__":
-    set_roster_data()
-    weekly_scores()
+    USERS_LIST = set_user_list()
+    rosters = get_league_rosters()
+
+    for roster in rosters:
+        print(roster, "\n\n")
     print(time.ctime())
