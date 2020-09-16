@@ -93,6 +93,10 @@ body {
     font-size: 15px;
     margin-right: 10px;
 }
+#hits {
+    visibility: hidden;
+    display: none;
+}
 
 .nav-item:after {
     position: relative;
