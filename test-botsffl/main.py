@@ -563,5 +563,7 @@ if __name__ == "__main__":
     rosters = get_league_rosters()
 
     for roster in rosters:
-        print(roster, "\n\n")
-    print(time.ctime())
+        value = roster["settings"]
+        if roster["owner_id"] in USERS_LIST:
+            print(value["fpts"])
+    # print(time.ctime())
