@@ -598,9 +598,9 @@ def tweet_scores(client, num_matchups):
 def send_tweet(message, num, total):
     try:
         message_length = len(message)
-        if message_length > 280:
-            new_message = message[:280]
-            i = 280
+        if (message_length > 274 and total > 1) or (message_length > 280 and total <= 1):
+            new_message = message[:274]
+            i = 274
             while new_message[-1] != "\n":
                 i -= 1
                 new_message = message[:i]
