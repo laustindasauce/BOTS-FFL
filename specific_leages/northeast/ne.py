@@ -259,7 +259,7 @@ def set_standings():
     week = get_week()
     beginning = f"NorthEast - week {week} standings: \n\n"
     combined_status = beginning + combined_status + "\n#BOTS2020"
-    num_tweets = math.ceil(len(combined_status) / 274)
+    num_tweets = math.ceil(len(combined_status) / 280)
     send_tweet(combined_status, 1, num_tweets)
     # print(combined_status)
 
@@ -404,7 +404,7 @@ def set_point_leaders():
     # week = get_week()
     # beginning = f"NorthEast - total points through week {week}: \n\n"
     # combined_status = beginning + combined_status + "\n#BOTS2020"
-    # num_tweets = math.ceil(len(combined_status) / 274)
+    # num_tweets = math.ceil(len(combined_status) / 280)
     # send_tweet(combined_status, 1, num_tweets)
     # print(combined_status)
     
@@ -587,7 +587,7 @@ def tweet_scores(client, num_matchups):
     week = get_week()
     beginning = f"NorthEast - week {week} results: \n\n"
     full_tweet = beginning + full_tweet + "\n#BOTS2020"
-    num_tweets = math.ceil(len(full_tweet) / 274)
+    num_tweets = math.ceil(len(full_tweet) / 280)
     send_tweet(full_tweet, 1, num_tweets)
     # print(full_tweet)
 
@@ -598,9 +598,9 @@ def tweet_scores(client, num_matchups):
 def send_tweet(message, num, total):
     try:
         message_length = len(message)
-        if message_length > 274:
-            new_message = message[:274]
-            i = 274
+        if message_length > 280:
+            new_message = message[:280]
+            i = 280
             while new_message[-1] != "\n":
                 i -= 1
                 new_message = message[:i]
