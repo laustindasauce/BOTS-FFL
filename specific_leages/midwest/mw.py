@@ -257,9 +257,9 @@ def set_standings():
     week = get_week()
     beginning = f"MidWest - week {week} standings: \n\n"
     combined_status = beginning + combined_status + "\n#BOTS2020"
-    num_tweets = math.ceil(len(combined_status) / 274)
-    send_tweet(combined_status, 1, num_tweets)
-    # print(combined_status)
+    # num_tweets = math.ceil(len(combined_status) / 274)
+    # send_tweet(combined_status, 1, num_tweets)
+    print(combined_status)
 
 
 def set_standings_website():
