@@ -629,7 +629,6 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-set_point_leaders()
 print(time.ctime())
 
 schedule.every().monday.at("02:00").do(update_week)
