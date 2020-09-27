@@ -1,4 +1,4 @@
-# Fantasy Football Twitter Bot
+# Fantasy Football Twitter Bot [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fabspen1%2FFantasy-Twitter&count_bg=%23808080&title_bg=%23306998&icon=python.svg&icon_color=%23FFD43B&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 Python run twitter bot that uses Tweepy API as well as the Sleeper.app API. Sleeper.app is the app used for the fantasy football league. This bot will tweet out information relative to the league. Such as, the leagues current standings, the matchup results for the week and more. 
 
