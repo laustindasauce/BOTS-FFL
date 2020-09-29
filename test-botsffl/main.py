@@ -612,13 +612,4 @@ def send_tweet(message, num, total):
 ########## Scheduler ###########
 
 if __name__ == "__main__":
-    USERS_LIST = set_user_list()
-    rosters = get_league_rosters()
-
-    for roster in rosters:
-        rosters_list = roster["players"]
-        for player in rosters_list:
-            players_list.append(player)
-    for player in players_list:
-        client.sadd('active_players', player)
-    print(client.scard('active_players'))
+    print("hello world")
