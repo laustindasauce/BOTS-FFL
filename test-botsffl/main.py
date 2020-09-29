@@ -24,7 +24,12 @@ consumer_secret = os.getenv("CONSUMER_SECRET")
 key = os.getenv("KEY")
 secret = os.getenv("SECRET")
 
+# Redis Client
+client = redis.Redis(host="10.10.10.1", port=6379, db=10,
+                     password=os.getenv("REDIS_PASS"))
+
 ########## Global Variables ###########
+players_list = []
 
 # Twitter Developer Account Settings
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -50,6 +55,8 @@ LEAGUE_ROSTERS = f"{BASE_URL}/v1/league/{league}/rosters"
 ROSTER = f"{BASE_URL}/v1/league/{league}/rosters"
 
 USER_IN_LEAGUE = f"{BASE_URL}/v1/league/{league}/users"
+
+PLAYERS = f"{BASE_URL}/v1/players/nfl"
 
 HEADERS = {'USER:': user, 'LEAGUE': league}
 
@@ -167,6 +174,52 @@ def get_league_matchups():
   },
   ...
 ]
+'''
+
+
+def get_players():
+    r = requests.get(PLAYERS)
+    client.set('botsffl_player_dict', r.text)
+
+
+'''
+{
+  "3086": {
+    "hashtag": "#TomBrady-NFL-NE-12",
+    "depth_chart_position": 1,
+    "status": "Active",
+    "sport": "nfl",
+    "fantasy_positions": ["QB"],
+    "number": 12,
+    "search_last_name": "brady",
+    "injury_start_date": null,
+    "weight": "220",
+    "position": "QB",
+    "practice_participation": null,
+    "sportradar_id": "",
+    "team": "NE",
+    "last_name": "Brady",
+    "college": "Michigan",
+    "fantasy_data_id":17836,
+    "injury_status":null,
+    "player_id":"3086",
+    "height": "6'4\"",
+    "search_full_name": "tombrady",
+    "age": 40,
+    "stats_id": "",
+    "birth_country": "United States",
+    "espn_id": "",
+    "search_rank": 24,
+    "first_name": "Tom",
+    "depth_chart_order": 1,
+    "years_exp": 14,
+    "rotowire_id": null,
+    "rotoworld_id": 8356,
+    "search_first_name": "tom",
+    "yahoo_id": null
+  },
+  ...
+}
 '''
 
 
@@ -563,7 +616,9 @@ if __name__ == "__main__":
     rosters = get_league_rosters()
 
     for roster in rosters:
-        value = roster["settings"]
-        if roster["owner_id"] in USERS_LIST:
-            print(value["fpts"])
-    # print(time.ctime())
+        rosters_list = roster["players"]
+        for player in rosters_list:
+            players_list.append(player)
+    for player in players_list:
+        client.sadd('active_players', player)
+    print(client.scard('active_players'))
