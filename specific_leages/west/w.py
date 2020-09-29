@@ -642,7 +642,6 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-set_active_players()
 print(time.ctime())
 
 schedule.every().monday.at("02:00").do(update_week)
