@@ -28,24 +28,28 @@ def set_players():
     for key, value in players.items():
         if key in stringlist:
             if value['position'] != "DEF":
-                set_position_player(value)
+                set_position_player(key, value)
                 continue
             else:
-                set_defense(value)
+                set_defense(key, value)
                 continue
 
 
-def set_position_player(info):
+def set_position_player(id, info):
     position = info['position']
-    set_title = "sleeper_" + str(position)
-    set_body = f"{info['full_name']}, Team: {info['team']}"
-    client.sadd(set_title, set_body)
+    hash_title = str(id)
+    hash_key = f"{info['full_name']}, Team: {info['team']}"
+    client.hset(hash_title, hash_key, position)
 
 
-def set_defense(info):
+def set_defense(id, info):
     position = info['position']
-    set_title = "sleeper_" + str(position)
-    client.sadd(set_title, info['team'])
+    hash_title = str(id)
+    client.hset(hash_title, info['team'], position)
+
+
+def clear_vars():
+    client.delete('active_players')
 
 
 print(time.ctime())
