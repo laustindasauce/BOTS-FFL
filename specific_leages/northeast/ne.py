@@ -640,6 +640,7 @@ schedule.every().monday.at("02:00").do(update_week)
 schedule.every().tuesday.at("06:00").do(set_roster_data)
 schedule.every().tuesday.at("08:00").do(weekly_scores)
 schedule.every().tuesday.at("16:00").do(set_standings)
+schedule.every().thursday.at("15:30").do(set_active_players)
 
 
 while True:
