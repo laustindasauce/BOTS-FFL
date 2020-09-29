@@ -493,6 +493,22 @@ def clear_vars(client):
             print(e)
 
 
+def set_active_players():
+    client = redis.Redis(host="10.10.10.1", port=6379, db=10,
+                         password=os.getenv("REDIS_PASS"))
+    USERS_LIST = set_user_list()
+    rosters = get_league_rosters()
+    players_list = []
+
+    for roster in rosters:
+        rosters_list = roster["players"]
+        for player in rosters_list:
+            players_list.append(player)
+    for player in players_list:
+        client.sadd('active_players', player)
+    print(client.scard('active_players'))
+    
+
 ########## Helper Functions ###########
 
 
