@@ -493,13 +493,23 @@ def set_active_players():
     client = redis.Redis(host="10.10.10.1", port=6379, db=10,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
+    client.delete("midwest_teams")
+    for user in USERS_LIST:
+        client.sadd("midwest_teams", get_team_name(user))
+    
     rosters = get_league_rosters()
     players_list = []
 
     for roster in rosters:
         rosters_list = roster["players"]
+        name = get_team_name(roster['owner_id'])
+        team_list = []
         for player in rosters_list:
-            players_list.append(player)
+            team_list.append(player)
+            if player not in players_list:
+                players_list.append(player)
+        for player in team_list:
+            client.sadd(name, player)
     for player in players_list:
         client.sadd('active_players', player)
     print(client.scard('active_players'))
@@ -629,6 +639,7 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
+set_active_players()
 print(time.ctime())
 
 schedule.every().monday.at("02:00").do(update_week)
