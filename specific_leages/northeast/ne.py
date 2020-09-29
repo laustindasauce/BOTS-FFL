@@ -496,23 +496,24 @@ def clear_vars(client):
 def set_active_players():
     client = redis.Redis(host="10.10.10.1", port=6379, db=10,
                          password=os.getenv("REDIS_PASS"))
-    USERS_LIST = set_user_list()
     client.delete("northeast_teams")
-    for user in USERS_LIST:
-        client.sadd("northeast_teams", get_team_name(user))
     rosters = get_league_rosters()
     players_list = []
 
     for roster in rosters:
         rosters_list = roster["players"]
         name = get_team_name(roster['owner_id'])
+        client.delete(name)
+        client.sadd("northeast_teams", name)
         team_list = []
         for player in rosters_list:
             team_list.append(player)
             if player not in players_list:
                 players_list.append(player)
         for player in team_list:
-            client.sadd(name, player)
+            playa = client.hgetall(player)
+            for key, value in playa.items():
+                client.hset(name, key.decode('utf-8'), value.decode('utf-8'))
     for player in players_list:
         client.sadd('active_players', player)
     print(client.scard('active_players'))
@@ -649,7 +650,7 @@ schedule.every().monday.at("02:00").do(update_week)
 schedule.every().tuesday.at("06:00").do(set_roster_data)
 schedule.every().tuesday.at("08:00").do(weekly_scores)
 schedule.every().tuesday.at("16:00").do(set_standings)
-schedule.every().thursday.at("15:30").do(set_active_players)
+schedule.every().thursday.at("17:30").do(set_active_players)
 
 
 while True:
