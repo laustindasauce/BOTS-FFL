@@ -121,13 +121,13 @@ body {
 }
 
 a {
-    color: #C9011E;
+    color: white;
     font-weight: 400;
     text-decoration: none;
 }
 
 a:hover {
-    color: #86041a;
+    color: #C9011E;
 }
 
 user agent stylesheet
