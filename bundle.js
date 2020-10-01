@@ -130,7 +130,7 @@ const getLeagueLeaders = async () => {
         document.getElementById("w_p11").innerHTML = response.data.PointsW11
         document.getElementById("w_p12").innerHTML = response.data.PointsW12
 
-        console.log(response.data)
+        // console.log(response.data)
 
     } catch (e) {
         console.error(e);
@@ -168,7 +168,7 @@ const getMidwestTeams = async () => {
         document.getElementById("MP11").innerHTML = response.data.Team11
         document.getElementById("MP12").innerHTML = response.data.Team12
 
-        console.log(response.data)
+        // console.log(response.data)
 
     } catch (e) {
         console.error(e);
@@ -206,7 +206,7 @@ const getWestTeams = async () => {
         document.getElementById("WP11").innerHTML = response.data.Team11
         document.getElementById("WP12").innerHTML = response.data.Team12
 
-        console.log(response.data)
+        // console.log(response.data)
 
     } catch (e) {
         console.error(e);
@@ -244,7 +244,7 @@ const getNortheastTeams = async () => {
         document.getElementById("NP11").innerHTML = response.data.Team11
         document.getElementById("NP12").innerHTML = response.data.Team12
 
-        console.log(response.data)
+        // console.log(response.data)
 
     } catch (e) {
         console.error(e);
@@ -282,12 +282,92 @@ const getSoutheastTeams = async () => {
         document.getElementById("SP11").innerHTML = response.data.Team11
         document.getElementById("SP12").innerHTML = response.data.Team12
 
-        console.log(response.data)
+        // console.log(response.data)
 
     } catch (e) {
         console.error(e);
     }
 };
+
+// Need to figure out how to display this better
+const getSoutheastRoster = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/austinapi/botsffl/teams/southeast/roster`
+    )
+    // Team rosters
+    j = 0
+    for (i in response.data) {
+        j++
+        id = "SS" + String(j)
+        document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+    }
+
+    // console.log(response.data)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const getNortheastRoster = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/austinapi/botsffl/teams/northeast/roster`
+    )
+    // Team rosters
+    j = 0
+    for (i in response.data) {
+      j++
+      id = 'NS' + String(j)
+      document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+    }
+
+    // console.log(response.data)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const getWestRoster = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/austinapi/botsffl/teams/west/roster`
+    )
+    // Team rosters
+    j = 0
+    for (i in response.data) {
+      j++
+      id = 'WS' + String(j)
+      document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+    }
+
+    // console.log(response.data)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const getMidwestRoster = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/austinapi/botsffl/teams/midwest/roster`
+    )
+    // Team rosters
+    j = 0
+    for (i in response.data) {
+      j++
+      id = 'MS' + String(j)
+      document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+    }
+
+    // console.log(response.data)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+
+
 
 function hideRosters() {
     se_roster_div.style.display = "none"
@@ -352,6 +432,10 @@ function main() {
     getMidwestTeams()
     getNortheastTeams()
     getSoutheastTeams()
+    getSoutheastRoster()
+    getNortheastRoster()
+    getMidwestRoster()
+    getWestRoster()
     getWestTeams()
     mw_roster_btn.addEventListener('click', function () {
         show_mw_roster()
