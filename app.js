@@ -299,10 +299,25 @@ const getSoutheastRoster = async () => {
     for (i in response.data) {
         j++
         id = "SS" + String(j)
-        document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+        var fullOutput = ""
+        // document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+        newData = response.data[i]
+        for (const [key, value] of Object.entries(newData)) {
+          k = 0
+          for (const [id, val] of Object.entries(value)) {
+            fullOutput += val
+            if (k % 2 === 0){
+              fullOutput += ", Pos: "
+            } else {
+              fullOutput += ", "
+            }
+            k++
+          }
+        }
+        document.getElementById(id).innerHTML = fullOutput
+        // console.log(fullOutput)
     }
 
-    // console.log(response.data)
   } catch (e) {
     console.error(e)
   }
@@ -318,7 +333,23 @@ const getNortheastRoster = async () => {
     for (i in response.data) {
       j++
       id = 'NS' + String(j)
-      document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+      var fullOutput = ""
+      // document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+      newData = response.data[i]
+      for (const [key, value] of Object.entries(newData)) {
+        k = 0
+        for (const [id, val] of Object.entries(value)) {
+          fullOutput += val
+          if (k % 2 === 0) {
+            fullOutput += ", Pos: "
+          } else {
+            fullOutput += ", "
+          }
+          k++
+        }
+      }
+      document.getElementById(id).innerHTML = fullOutput
+      // console.log(fullOutput)
     }
 
     // console.log(response.data)
@@ -337,7 +368,23 @@ const getWestRoster = async () => {
     for (i in response.data) {
       j++
       id = 'WS' + String(j)
-      document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+      var fullOutput = ""
+      // document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+      newData = response.data[i]
+      for (const [key, value] of Object.entries(newData)) {
+        k = 0
+        for (const [id, val] of Object.entries(value)) {
+          fullOutput += val
+          if (k % 2 === 0) {
+            fullOutput += ", Pos: "
+          } else {
+            fullOutput += ", "
+          }
+          k++
+        }
+      }
+      document.getElementById(id).innerHTML = fullOutput
+      // console.log(fullOutput)
     }
 
     // console.log(response.data)
@@ -356,7 +403,23 @@ const getMidwestRoster = async () => {
     for (i in response.data) {
       j++
       id = 'MS' + String(j)
-      document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+      var fullOutput = ""
+      // document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+      newData = response.data[i]
+      for (const [key, value] of Object.entries(newData)) {
+        k = 0
+        for (const [id, val] of Object.entries(value)) {
+          fullOutput += val
+          if (k % 2 === 0) {
+            fullOutput += ", Pos: "
+          } else {
+            fullOutput += ", "
+          }
+          k++
+        }
+      }
+      document.getElementById(id).innerHTML = fullOutput
+      // console.log(fullOutput)
     }
 
     // console.log(response.data)
