@@ -299,25 +299,58 @@ const getSoutheastRoster = async () => {
     for (i in response.data) {
         j++
         id = "SS" + String(j)
-        var fullOutput = ""
-        // document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
-        newData = response.data[i]
-        for (const [key, value] of Object.entries(newData)) {
-          k = 0
-          for (const [id, val] of Object.entries(value)) {
-            fullOutput += val
-            if (k % 2 === 0){
-              fullOutput += ", Pos: "
+      // document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
+      newData = response.data[i]
+      for (const [key, value] of Object.entries(newData)) {
+        k = 0
+        qb = 0
+        rb = 0
+        te = 0
+        ki = 0
+        def = 0
+        wr = 0
+        var output = ""
+        for (const [key2, val] of Object.entries(value)) {
+          // fullOutput += val
+          if (k % 2 === 0) {
+            output = val
+          } else {
+            if (val == "QB") {
+              qb++
+              newId = id + "QB" + String(qb)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "RB") {
+              rb++
+              newId = id + "RB" + String(rb)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "WR") {
+              wr++
+              newId = id + "WR" + String(wr)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "TE") {
+              te++
+              newId = id + "TE" + String(te)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "K") {
+              ki++
+              newId = id + "K" + String(ki)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "DEF") {
+              def++
+              newId = id + "DEF" + String(def)
+              document.getElementById(newId).innerHTML = output
             } else {
-              fullOutput += ", "
+              console.log(val)
             }
-            k++
           }
+          k++
         }
-        document.getElementById(id).innerHTML = fullOutput
-        // console.log(fullOutput)
+      }
+      // document.getElementById(id).innerHTML = fullOutput
+      // console.log(fullOutput)
     }
 
+    // console.log(response.data)
   } catch (e) {
     console.error(e)
   }
@@ -332,23 +365,56 @@ const getNortheastRoster = async () => {
     j = 0
     for (i in response.data) {
       j++
+
       id = 'NS' + String(j)
-      var fullOutput = ""
       // document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
       newData = response.data[i]
       for (const [key, value] of Object.entries(newData)) {
         k = 0
-        for (const [id, val] of Object.entries(value)) {
-          fullOutput += val
+        qb = 0
+        rb = 0
+        te = 0
+        ki = 0
+        def = 0
+        wr = 0
+        var output = ""
+        for (const [key2, val] of Object.entries(value)) {
+          // fullOutput += val
           if (k % 2 === 0) {
-            fullOutput += ", Pos: "
+            output = val
           } else {
-            fullOutput += ", "
+            if (val == "QB"){ 
+              qb++
+              newId = id + "QB" + String(qb)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "RB") {
+              rb++
+              newId = id + "RB" + String(rb)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "WR") {
+              wr++
+              newId = id + "WR" + String(wr)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "TE") {
+              te++
+              newId = id + "TE" + String(te)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "K") {
+              ki++
+              newId = id + "K" + String(ki)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "DEF") {
+              def++
+              newId = id + "DEF" + String(def)
+              document.getElementById(newId).innerHTML = output
+            } else {
+              console.log(val)
+            }
           }
           k++
         }
       }
-      document.getElementById(id).innerHTML = fullOutput
+      // document.getElementById(id).innerHTML = fullOutput
       // console.log(fullOutput)
     }
 
@@ -368,22 +434,54 @@ const getWestRoster = async () => {
     for (i in response.data) {
       j++
       id = 'WS' + String(j)
-      var fullOutput = ""
       // document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
       newData = response.data[i]
       for (const [key, value] of Object.entries(newData)) {
         k = 0
-        for (const [id, val] of Object.entries(value)) {
-          fullOutput += val
+        qb = 0
+        rb = 0
+        te = 0
+        ki = 0
+        def = 0
+        wr = 0
+        var output = ""
+        for (const [key2, val] of Object.entries(value)) {
+          // fullOutput += val
           if (k % 2 === 0) {
-            fullOutput += ", Pos: "
+            output = val
           } else {
-            fullOutput += ", "
+            if (val == "QB") {
+              qb++
+              newId = id + "QB" + String(qb)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "RB") {
+              rb++
+              newId = id + "RB" + String(rb)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "WR") {
+              wr++
+              newId = id + "WR" + String(wr)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "TE") {
+              te++
+              newId = id + "TE" + String(te)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "K") {
+              ki++
+              newId = id + "K" + String(ki)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "DEF") {
+              def++
+              newId = id + "DEF" + String(def)
+              document.getElementById(newId).innerHTML = output
+            } else {
+              console.log(val)
+            }
           }
           k++
         }
       }
-      document.getElementById(id).innerHTML = fullOutput
+      // document.getElementById(id).innerHTML = fullOutput
       // console.log(fullOutput)
     }
 
@@ -403,22 +501,54 @@ const getMidwestRoster = async () => {
     for (i in response.data) {
       j++
       id = 'MS' + String(j)
-      var fullOutput = ""
       // document.getElementById(id).innerHTML = JSON.stringify(response.data[i])
       newData = response.data[i]
       for (const [key, value] of Object.entries(newData)) {
         k = 0
-        for (const [id, val] of Object.entries(value)) {
-          fullOutput += val
+        qb = 0
+        rb = 0
+        te = 0
+        ki = 0
+        def = 0
+        wr = 0
+        var output = ""
+        for (const [key2, val] of Object.entries(value)) {
+          // fullOutput += val
           if (k % 2 === 0) {
-            fullOutput += ", Pos: "
+            output = val
           } else {
-            fullOutput += ", "
+            if (val == "QB") {
+              qb++
+              newId = id + "QB" + String(qb)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "RB") {
+              rb++
+              newId = id + "RB" + String(rb)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "WR") {
+              wr++
+              newId = id + "WR" + String(wr)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "TE") {
+              te++
+              newId = id + "TE" + String(te)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "K") {
+              ki++
+              newId = id + "K" + String(ki)
+              document.getElementById(newId).innerHTML = output
+            } else if (val == "DEF") {
+              def++
+              newId = id + "DEF" + String(def)
+              document.getElementById(newId).innerHTML = output
+            } else {
+              console.log(val)
+            }
           }
           k++
         }
       }
-      document.getElementById(id).innerHTML = fullOutput
+      // document.getElementById(id).innerHTML = fullOutput
       // console.log(fullOutput)
     }
 
