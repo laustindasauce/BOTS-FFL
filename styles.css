@@ -105,6 +105,11 @@ body {
     font-size: 15px;
     margin-right: 10px;
 }
+#Midwest, #Northeast, #Southeast, #West {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 150px;
+}
 
 #pic {
     /* width: 100%; */
@@ -302,6 +307,10 @@ a:-webkit-any-link {
     display: inline-table;
     width: 100%;
     table-layout: fixed;
+}
+
+#M1, #M2, #M2, #M3, #M4, #M5, #M6, #M7, #M8, #M9, #M10, #M11, #M12, #W1, #W2, #W3, #W4, #W5, #W6, #W7, #W8, #W9, #W10, #W11, #W12, #S1, #S2, #S3, #S4, #S5, #S6, #S7, #S8, #S9, #S10, #S11, #S12, #N1, #N2, #N3, #N4, #N5, #N6, #N7, #N8, #N9, #N10, #N11, #N12 {
+    display: none;
 }
 
 .west {

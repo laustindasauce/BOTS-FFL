@@ -1,5 +1,20 @@
 const axios = require('axios')
 
+const mw_roster_div = document.getElementById('midwestRosters')
+const w_roster_div = document.getElementById('westRosters')
+const ne_roster_div = document.getElementById('northeastRosters')
+const se_roster_div = document.getElementById('southeastRosters')
+
+const mw_roster_btn = document.getElementById('mwbtn')
+const w_roster_btn = document.getElementById('wbtn')
+const ne_roster_btn = document.getElementById('nebtn')
+const se_roster_btn = document.getElementById('sebtn')
+
+const mw_roster_value = document.getElementById('Midwest')
+const se_roster_value = document.getElementById('Southeast')
+const ne_roster_value = document.getElementById('Northeast')
+const w_roster_value = document.getElementById('West')
+
 const BASE_URL = 'https://guldentech.com'
 
 const getLeagueLeaders = async () => {
@@ -121,10 +136,234 @@ const getLeagueLeaders = async () => {
     }
 };
 
+const getMidwestTeams = async () => {
+    try {
+        const response = await axios.get(`${BASE_URL}/austinapi/botsffl/teams/midwest`);
+
+        // Midwest team names for drop down
+        document.getElementById("Mteam1").innerHTML = response.data.Team1
+        document.getElementById("Mteam2").innerHTML = response.data.Team2
+        document.getElementById("Mteam3").innerHTML = response.data.Team3
+        document.getElementById("Mteam4").innerHTML = response.data.Team4
+        document.getElementById("Mteam5").innerHTML = response.data.Team5
+        document.getElementById("Mteam6").innerHTML = response.data.Team6
+        document.getElementById("Mteam7").innerHTML = response.data.Team7
+        document.getElementById("Mteam8").innerHTML = response.data.Team8
+        document.getElementById("Mteam9").innerHTML = response.data.Team9
+        document.getElementById("Mteam10").innerHTML = response.data.Team10
+        document.getElementById("Mteam11").innerHTML = response.data.Team11
+        document.getElementById("Mteam12").innerHTML = response.data.Team12
+        // team names for div
+        document.getElementById("MP1").innerHTML = response.data.Team1
+        document.getElementById("MP2").innerHTML = response.data.Team2
+        document.getElementById("MP3").innerHTML = response.data.Team3
+        document.getElementById("MP4").innerHTML = response.data.Team4
+        document.getElementById("MP5").innerHTML = response.data.Team5
+        document.getElementById("MP6").innerHTML = response.data.Team6
+        document.getElementById("MP7").innerHTML = response.data.Team7
+        document.getElementById("MP8").innerHTML = response.data.Team8
+        document.getElementById("MP9").innerHTML = response.data.Team9
+        document.getElementById("MP10").innerHTML = response.data.Team10
+        document.getElementById("MP11").innerHTML = response.data.Team11
+        document.getElementById("MP12").innerHTML = response.data.Team12
+
+        console.log(response.data)
+
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+const getWestTeams = async () => {
+    try {
+        const response = await axios.get(`${BASE_URL}/austinapi/botsffl/teams/west`);
+
+        // West team names for drop down
+        document.getElementById("Wteam1").innerHTML = response.data.Team1
+        document.getElementById("Wteam2").innerHTML = response.data.Team2
+        document.getElementById("Wteam3").innerHTML = response.data.Team3
+        document.getElementById("Wteam4").innerHTML = response.data.Team4
+        document.getElementById("Wteam5").innerHTML = response.data.Team5
+        document.getElementById("Wteam6").innerHTML = response.data.Team6
+        document.getElementById("Wteam7").innerHTML = response.data.Team7
+        document.getElementById("Wteam8").innerHTML = response.data.Team8
+        document.getElementById("Wteam9").innerHTML = response.data.Team9
+        document.getElementById("Wteam10").innerHTML = response.data.Team10
+        document.getElementById("Wteam11").innerHTML = response.data.Team11
+        document.getElementById("Wteam12").innerHTML = response.data.Team12
+        // team names for div
+        document.getElementById("WP1").innerHTML = response.data.Team1
+        document.getElementById("WP2").innerHTML = response.data.Team2
+        document.getElementById("WP3").innerHTML = response.data.Team3
+        document.getElementById("WP4").innerHTML = response.data.Team4
+        document.getElementById("WP5").innerHTML = response.data.Team5
+        document.getElementById("WP6").innerHTML = response.data.Team6
+        document.getElementById("WP7").innerHTML = response.data.Team7
+        document.getElementById("WP8").innerHTML = response.data.Team8
+        document.getElementById("WP9").innerHTML = response.data.Team9
+        document.getElementById("WP10").innerHTML = response.data.Team10
+        document.getElementById("WP11").innerHTML = response.data.Team11
+        document.getElementById("WP12").innerHTML = response.data.Team12
+
+        console.log(response.data)
+
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+const getNortheastTeams = async () => {
+    try {
+        const response = await axios.get(`${BASE_URL}/austinapi/botsffl/teams/northeast`);
+
+        // Northeast team names for drop down
+        document.getElementById("Nteam1").innerHTML = response.data.Team1
+        document.getElementById("Nteam2").innerHTML = response.data.Team2
+        document.getElementById("Nteam3").innerHTML = response.data.Team3
+        document.getElementById("Nteam4").innerHTML = response.data.Team4
+        document.getElementById("Nteam5").innerHTML = response.data.Team5
+        document.getElementById("Nteam6").innerHTML = response.data.Team6
+        document.getElementById("Nteam7").innerHTML = response.data.Team7
+        document.getElementById("Nteam8").innerHTML = response.data.Team8
+        document.getElementById("Nteam9").innerHTML = response.data.Team9
+        document.getElementById("Nteam10").innerHTML = response.data.Team10
+        document.getElementById("Nteam11").innerHTML = response.data.Team11
+        document.getElementById("Nteam12").innerHTML = response.data.Team12
+        // Team names for div
+        document.getElementById("NP1").innerHTML = response.data.Team1
+        document.getElementById("NP2").innerHTML = response.data.Team2
+        document.getElementById("NP3").innerHTML = response.data.Team3
+        document.getElementById("NP4").innerHTML = response.data.Team4
+        document.getElementById("NP5").innerHTML = response.data.Team5
+        document.getElementById("NP6").innerHTML = response.data.Team6
+        document.getElementById("NP7").innerHTML = response.data.Team7
+        document.getElementById("NP8").innerHTML = response.data.Team8
+        document.getElementById("NP9").innerHTML = response.data.Team9
+        document.getElementById("NP10").innerHTML = response.data.Team10
+        document.getElementById("NP11").innerHTML = response.data.Team11
+        document.getElementById("NP12").innerHTML = response.data.Team12
+
+        console.log(response.data)
+
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+const getSoutheastTeams = async () => {
+    try {
+        const response = await axios.get(`${BASE_URL}/austinapi/botsffl/teams/southeast`);
+
+        // Southeast team names for drop down
+        document.getElementById("Steam1").innerHTML = response.data.Team1
+        document.getElementById("Steam2").innerHTML = response.data.Team2
+        document.getElementById("Steam3").innerHTML = response.data.Team3
+        document.getElementById("Steam4").innerHTML = response.data.Team4
+        document.getElementById("Steam5").innerHTML = response.data.Team5
+        document.getElementById("Steam6").innerHTML = response.data.Team6
+        document.getElementById("Steam7").innerHTML = response.data.Team7
+        document.getElementById("Steam8").innerHTML = response.data.Team8
+        document.getElementById("Steam9").innerHTML = response.data.Team9
+        document.getElementById("Steam10").innerHTML = response.data.Team10
+        document.getElementById("Steam11").innerHTML = response.data.Team11
+        document.getElementById("Steam12").innerHTML = response.data.Team12
+        // Team names for div
+        document.getElementById("SP1").innerHTML = response.data.Team1
+        document.getElementById("SP2").innerHTML = response.data.Team2
+        document.getElementById("SP3").innerHTML = response.data.Team3
+        document.getElementById("SP4").innerHTML = response.data.Team4
+        document.getElementById("SP5").innerHTML = response.data.Team5
+        document.getElementById("SP6").innerHTML = response.data.Team6
+        document.getElementById("SP7").innerHTML = response.data.Team7
+        document.getElementById("SP8").innerHTML = response.data.Team8
+        document.getElementById("SP9").innerHTML = response.data.Team9
+        document.getElementById("SP10").innerHTML = response.data.Team10
+        document.getElementById("SP11").innerHTML = response.data.Team11
+        document.getElementById("SP12").innerHTML = response.data.Team12
+
+        console.log(response.data)
+
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+function hideRosters() {
+    se_roster_div.style.display = "none"
+    mw_roster_div.style.display = "none"
+    ne_roster_div.style.display = "none"
+    w_roster_div.style.display = "none"
+}
+
+function show_mw_roster() {
+    var num = mw_roster_value.value
+    if (num == 0) {
+        alert('Please select a team')
+        return
+    }
+    var id = "M" + String(num)
+    mw_roster_div.style.display = "block"
+    document.getElementById(id).style.display = "block"
+    mw_roster_value.value = 0
+}
+
+function show_se_roster() {
+    var num = se_roster_value.value
+    if (num == 0) {
+        alert('Please select a team')
+        return
+    }
+    var id = "S" + String(num)
+    se_roster_div.style.display = "block"
+    document.getElementById(id).style.display = "block"
+    se_roster_value.value = 0
+}
+
+function show_ne_roster() {
+    var num = ne_roster_value.value
+    if (num == 0) {
+        alert('Please select a team')
+        return
+    }
+    var id = "N" + String(num)
+    ne_roster_div.style.display = "block"
+    document.getElementById(id).style.display = "block"
+    ne_roster_value.value = 0
+}
+
+function show_w_roster() {
+    var num = w_roster_value.value
+    if (num == 0) {
+        alert('Please select a team')
+        return
+    }
+    var id = "W" + String(num)
+    w_roster_div.style.display = "block"
+    document.getElementById(id).style.display = "block"
+    w_roster_value.value = 0
+}
+
 // This is to set up our leaders on each load of site
 function main() {
     // console.log("Welcome to BOTSFFL github pages")
     getLeagueLeaders()
+    hideRosters()
+    getMidwestTeams()
+    getNortheastTeams()
+    getSoutheastTeams()
+    getWestTeams()
+    mw_roster_btn.addEventListener('click', function () {
+        show_mw_roster()
+    })
+    se_roster_btn.addEventListener('click', function () {
+        show_se_roster()
+    })
+    ne_roster_btn.addEventListener('click', function () {
+        show_ne_roster()
+    })
+    w_roster_btn.addEventListener('click', function () {
+        show_w_roster()
+    })
 }
 
 main()

@@ -52,8 +52,50 @@ def clear_vars():
     client.delete('active_players')
 
 
+def set_team_names():
+    team_list = []
+    bytelist = client.smembers('midwest_teams')
+    mw = [x.decode('utf-8') for x in bytelist]
+    i =0
+    for team in mw:
+        i += 1
+        title = "mw_team_" + str(i)
+        client.set(title, team)
+    team_list.append(mw)
+    bytelist = client.smembers('northeast_teams')
+    ne = [x.decode('utf-8') for x in bytelist]
+    i = 0
+    for team in ne:
+        i += 1
+        title = "ne_team_" + str(i)
+        client.set(title, team)
+    team_list.append(ne)
+    bytelist = client.smembers('southeast_teams')
+    se = [x.decode('utf-8') for x in bytelist]
+    i = 0
+    for team in se:
+        i += 1
+        title = "se_team_" + str(i)
+        client.set(title, team)
+    team_list.append(se)
+    bytelist = client.smembers('west_teams')
+    w = [x.decode('utf-8') for x in bytelist]
+    i = 0
+    for team in w:
+        i += 1
+        title = "w_team_" + str(i)
+        client.set(title, team)
+    team_list.append(w)
+    # for team in team_list:
+        # for t in team:
+        #     print(client.hgetall(t))
+        #     print("\n")
+
+
+
 print(time.ctime())
 schedule.every().thursday.at("16:02").do(set_players)
+schedule.every().thursday.at("16:15")
 
 
 while True:
