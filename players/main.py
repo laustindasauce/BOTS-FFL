@@ -95,7 +95,7 @@ def set_team_names():
 
 print(time.ctime())
 schedule.every().thursday.at("16:02").do(set_players)
-schedule.every().thursday.at("16:15")
+schedule.every().thursday.at("18:15").do(set_team_names)
 
 
 while True:
