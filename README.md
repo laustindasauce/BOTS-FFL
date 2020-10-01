@@ -14,7 +14,7 @@ This is a helper script that will run and pull the huge dataset of players sleep
 
 ## Website
 
-The website is built with HTML/CSS/JavaScript. This was a fun site to build since I know there will be people actually visiting this site weekly. I chose to display everything by league. Right now that includes the standings, point leaders, and the rosters(new). All of the data being displayed is stored on Redis database and is recieved through get requests to [my back-end server](https://github.com/abspen1/go-backend). Each time the page is loaded all of the data is pulled, I could maybe do this more efficiently, especially for the rosters. Since I am pulling the data and it isn't even visible unless it is clicked. What I could do instead is only pull the data once the league is actually clicked on.
+The website is built with HTML/CSS/JavaScript on [webpage](https://github.com/abspen1/Fantasy-Twitter/tree/webpage) branch. This was a fun site to build since I know there will be people actually visiting this site weekly. I chose to display everything by league. Right now that includes the standings, point leaders, and the rosters(new). All of the data being displayed is stored on Redis database and is recieved through get requests to [my back-end server](https://github.com/abspen1/go-backend). Each time the page is loaded all of the data is pulled, I could maybe do this more efficiently, especially for the rosters. Since I am pulling the data and it isn't even visible unless it is clicked. What I could do instead is only pull the data once the league is actually clicked on.
 
 
 ## Test
