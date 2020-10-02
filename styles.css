@@ -52,10 +52,10 @@ body {
     font-size: 15px;
     margin-right: 10px;
 }
-#hits {
+/* #hits {
     visibility: hidden;
     display: none;
-}
+} */
 
 .nav-item:after {
     position: relative;
@@ -304,6 +304,6 @@ a:-webkit-any-link {
     background-color: rgba(0, 0, 0, 0.3);
     color: white;
     text-align: center;
-    padding: .5rem;
-    font-size: 1rem;
+    padding: .9rem;
+    font-size: 1.15rem;
 }
