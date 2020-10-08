@@ -22,30 +22,42 @@ then instead of using the sismember we can use if key in stringlist:
 should make run time significantly faster..
 '''
 def set_players():
-    bytelist = client.smembers('active_players')
-    stringlist = [x.decode('utf-8') for x in bytelist]
+    # bytelist = client.smembers('active_players')
+    # stringlist = [x.decode('utf-8') for x in bytelist]
     players = get_players()
+    i = 0
     for key, value in players.items():
-        if key in stringlist:
-            if value['position'] != "DEF":
-                set_position_player(key, value)
-                continue
-            else:
-                set_defense(key, value)
-                continue
+        i += 1
+        if i % 1000 == 0:
+            print(f"{i} players added to database!")
+        if value['position'] != "DEF":
+            i = set_position_player(key, value, i)
+            continue
+        else:
+            i = set_defense(key, value, i)
+            continue
+    print(f"Total of {i} players added to database")
 
 
-def set_position_player(id, info):
+def set_position_player(id, info, i):
     position = info['position']
     hash_title = str(id)
     hash_key = f"{info['full_name']}, Team: {info['team']}"
-    client.hset(hash_title, hash_key, position)
+    try:
+        client.hset(hash_title, hash_key, position)
+        return i
+    except Exception:
+        return i-1
 
 
-def set_defense(id, info):
+def set_defense(id, info, i):
     position = info['position']
     hash_title = str(id)
-    client.hset(hash_title, info['team'], position)
+    try:
+        client.hset(hash_title, info["team"], position)
+        return i
+    except Exception:
+        return i-1
 
 
 def clear_vars():
@@ -90,7 +102,6 @@ def set_team_names():
         # for t in team:
         #     print(client.hgetall(t))
         #     print("\n")
-
 
 
 print(time.ctime())
