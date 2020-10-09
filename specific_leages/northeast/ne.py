@@ -236,15 +236,15 @@ def set_standings():
             status = f"1st: {team_name} ({value}-{losses})"
         elif i <= leaders and leaders > 1:
             status = f"1st: {team_name} ({value}-{losses})"
-        elif (i - 2) % 10 == 0 and last > int(value):
+        elif (i - 2) % 10 == 0 and last > int(value) and i < 10:
             status = f"2nd: {team_name} ({value}-{losses})"
-        elif (i - 2) % 10 == 0 and last > int(value):
+        elif (i - 2) % 10 == 0 and last > int(value) and i < 10:
             status = f"2nd: {team_name} ({value}-{losses})"
-        elif (i - 3) % 10 == 0 and last > int(value):
+        elif (i - 3) % 10 == 0 and last > int(value) and i < 10:
             status = f"3rd: {team_name} ({value}-{losses})"
-        elif (i - 3) % 10 == 0 and last == int(value):
+        elif (i - 3) % 10 == 0 and last == int(value) and i < 10:
             status = f"3rd: {team_name} ({value}-{losses})"
-        elif last > int(value):
+        elif last > int(value) and i < 10:
             status = f"{i}th: {team_name} ({value}-{losses})"
             repeat = 1
         else:
@@ -314,15 +314,15 @@ def set_standings_website():
             status = f"1st: {team_name} ({value}-{losses})"
         elif i <= leaders and leaders > 1:
             status = f"1st: {team_name} ({value}-{losses})"
-        elif (i - 2) % 10 == 0 and last > int(value):
+        elif (i - 2) % 10 == 0 and last > int(value) and i < 10:
             status = f"2nd: {team_name} ({value}-{losses})"
-        elif (i - 2) % 10 == 0 and last > int(value):
+        elif (i - 2) % 10 == 0 and last > int(value) and i < 10:
             status = f"2nd: {team_name} ({value}-{losses})"
-        elif (i - 3) % 10 == 0 and last > int(value):
+        elif (i - 3) % 10 == 0 and last > int(value) and i < 10:
             status = f"3rd: {team_name} ({value}-{losses})"
-        elif (i - 3) % 10 == 0 and last == int(value):
+        elif (i - 3) % 10 == 0 and last == int(value) and i < 10:
             status = f"3rd: {team_name} ({value}-{losses})"
-        elif last > int(value):
+        elif last > int(value) and i < 10:
             status = f"{i}th: {team_name} ({value}-{losses})"
             repeat = 1
         else:
@@ -644,6 +644,7 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
+set_standings_website()
 print(time.ctime())
 
 schedule.every().monday.at("02:00").do(update_week)
