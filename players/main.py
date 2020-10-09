@@ -4,6 +4,19 @@ import redis
 import requests
 import schedule
 import time
+import tweepy
+
+# Twitter Developer Account Credentials
+consumer_key = os.getenv("CONSUMER_KEY")
+consumer_secret = os.getenv("CONSUMER_SECRET")
+key = os.getenv("KEY")
+secret = os.getenv("SECRET")
+
+# Twitter Developer Account Settings
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(key, secret)
+auth.secure = True
+api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 client = redis.Redis(host="10.10.10.1", port=6379, db=10,
                      password=os.getenv("REDIS_PASS"))
@@ -98,15 +111,67 @@ def set_team_names():
         title = "w_team_" + str(i)
         client.set(title, team)
     team_list.append(w)
-    # for team in team_list:
-        # for t in team:
-        #     print(client.hgetall(t))
-        #     print("\n")
+
+
+def get_trending(type, hours, limit):
+    url = f"https://sleeper.app/v1/players/nfl/trending/{type}?lookback_hours={hours}&limit={limit}"
+    r = requests.get(url)
+    return json.loads(r.content)
+
+
+def send_add_tweet(content):
+    content = "Looking for some last minute waiver pickups? Here are sleeper's top trending players based on adds in the past 5 days.\n\n" + content
+    content = content + "#BOTS2020"
+    api.update_status(content)
+
+
+def send_drop_tweet(content):
+    content = "Sleeper's top 3 dropped players today\n\n" + content
+    content = content + "#BOTS2020"
+    print(content)
+
+
+def trending():
+    add = get_trending("add", 120, 3)
+    to_string = ""
+    i = 0
+    for item in add:
+        i += 1
+        hash = client.hgetall(item["player_id"])
+        for key, value in hash.items():
+            key = key.decode("utf-8")
+            value = value.decode("utf-8")
+            if i == 1:
+                position = "1st:"
+            elif i == 2:
+                position = "2nd:"
+            else:
+                position = "3rd:"
+            to_string += f"{position} {key}, {value}\n"
+    send_add_tweet(to_string)
+    # drop = get_trending("drop", 24, 3)
+    # i = 0
+    # to_string = ""
+    # for item in drop:
+    #     i += 1
+    #     hash = client.hgetall(item["player_id"])
+    #     for key, value in hash.items():
+    #         key = key.decode("utf-8")
+    #         value = value.decode("utf-8")
+    #         if i == 1:
+    #             position = "1st:"
+    #         elif i == 2:
+    #             position = "2nd:"
+    #         else:
+    #             position = "3rd:"
+    #         to_string += f"{position} {key}, Position: {value}\n"
+    # send_drop_tweet(to_string)
 
 
 print(time.ctime())
-schedule.every().thursday.at("16:02").do(set_players)
+schedule.every().day.at("16:00").do(set_players)
 schedule.every().thursday.at("18:15").do(set_team_names)
+schedule.every().friday.at("18:00").do(trending)
 
 
 while True:
