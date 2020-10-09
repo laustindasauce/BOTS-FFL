@@ -462,6 +462,7 @@ const getWestRoster = async () => {
             } else if (val == "WR") {
               wr++
               newId = id + "WR" + String(wr)
+              console.log(newId)
               document.getElementById(newId).innerHTML = output
             } else if (val == "TE") {
               te++
@@ -559,18 +560,90 @@ const getMidwestRoster = async () => {
   }
 }
 
-const getTrending = async (type, hours, limit) => {
+const getTrendingDaily = async () => {
     try {
-        const res = await axios.get(`https://sleeper.app/v1/players/nfl/trending/${type}?lookback_hours=${hours}&limit=${limit}`);
+        const response = await axios.get(
+      `${BASE_URL}/austinapi/botsffl/trending/daily/add`
+    )
 
-        const players = res.data;
+    document.getElementById("da_p1").innerHTML = response.data.DayAdd1
+    document.getElementById("da_p2").innerHTML = response.data.DayAdd2
+    document.getElementById("da_p3").innerHTML = response.data.DayAdd3
+    document.getElementById("da_p4").innerHTML = response.data.DayAdd4
+    document.getElementById("da_p5").innerHTML = response.data.DayAdd5
+    document.getElementById("da_p6").innerHTML = response.data.DayAdd6
+    document.getElementById("da_p7").innerHTML = response.data.DayAdd7
+    document.getElementById("da_p8").innerHTML = response.data.DayAdd8
+    document.getElementById("da_p9").innerHTML = response.data.DayAdd9
+    document.getElementById("da_p10").innerHTML = response.data.DayAdd10
 
-        console.log(`GET: Here's the list of players`, players);
+  } catch (e) {
+      console.error(e);
+  }
 
-        return
-    } catch (e) {
-        console.error(e);
-    }
+  try {
+        const response = await axios.get(
+      `${BASE_URL}/austinapi/botsffl/trending/daily/drop`
+    )
+
+    document.getElementById("dd_p1").innerHTML = response.data.DayDrop1
+    document.getElementById("dd_p2").innerHTML = response.data.DayDrop2
+    document.getElementById("dd_p3").innerHTML = response.data.DayDrop3
+    document.getElementById("dd_p4").innerHTML = response.data.DayDrop4
+    document.getElementById("dd_p5").innerHTML = response.data.DayDrop5
+    document.getElementById("dd_p6").innerHTML = response.data.DayDrop6
+    document.getElementById("dd_p7").innerHTML = response.data.DayDrop7
+    document.getElementById("dd_p8").innerHTML = response.data.DayDrop8
+    document.getElementById("dd_p9").innerHTML = response.data.DayDrop9
+    document.getElementById("dd_p10").innerHTML = response.data.DayDrop10
+    
+    return
+  } catch (e) {
+      console.error(e);
+  }
+};
+
+const getTrendingWeekly = async () => {
+    try {
+        const response = await axios.get(
+      `${BASE_URL}/austinapi/botsffl/trending/weekly/add`
+    )
+
+    document.getElementById("wa_p1").innerHTML = response.data.WeekAdd1
+    document.getElementById("wa_p2").innerHTML = response.data.WeekAdd2
+    document.getElementById("wa_p3").innerHTML = response.data.WeekAdd3
+    document.getElementById("wa_p4").innerHTML = response.data.WeekAdd4
+    document.getElementById("wa_p5").innerHTML = response.data.WeekAdd5
+    document.getElementById("wa_p6").innerHTML = response.data.WeekAdd6
+    document.getElementById("wa_p7").innerHTML = response.data.WeekAdd7
+    document.getElementById("wa_p8").innerHTML = response.data.WeekAdd8
+    document.getElementById("wa_p9").innerHTML = response.data.WeekAdd9
+    document.getElementById("wa_p10").innerHTML = response.data.WeekAdd10
+
+  } catch (e) {
+      console.error(e);
+  }
+
+  try {
+        const response = await axios.get(
+      `${BASE_URL}/austinapi/botsffl/trending/weekly/drop`
+    )
+
+    document.getElementById("wd_p1").innerHTML = response.data.WeekDrop1
+    document.getElementById("wd_p2").innerHTML = response.data.WeekDrop2
+    document.getElementById("wd_p3").innerHTML = response.data.WeekDrop3
+    document.getElementById("wd_p4").innerHTML = response.data.WeekDrop4
+    document.getElementById("wd_p5").innerHTML = response.data.WeekDrop5
+    document.getElementById("wd_p6").innerHTML = response.data.WeekDrop6
+    document.getElementById("wd_p7").innerHTML = response.data.WeekDrop7
+    document.getElementById("wd_p8").innerHTML = response.data.WeekDrop8
+    document.getElementById("wd_p9").innerHTML = response.data.WeekDrop9
+    document.getElementById("wd_p10").innerHTML = response.data.WeekDrop10
+    
+    return
+  } catch (e) {
+      console.error(e);
+  }
 };
 
 
@@ -644,7 +717,8 @@ function main() {
     getMidwestRoster()
     getWestRoster()
     getWestTeams()
-    getTrending("add", 24, 5)
+    getTrendingDaily()
+    getTrendingWeekly()
     mw_roster_btn.addEventListener('click', function () {
         show_mw_roster()
     })

@@ -271,6 +271,10 @@ a:-webkit-any-link {
 #ol {
     list-style-type: none;
 }
+#ol1 {
+    text-align: -webkit-match-parent;
+    padding-left: 15px;
+}
 
 #M1, #M2, #M2, #M3, #M4, #M5, #M6, #M7, #M8, #M9, #M10, #M11, #M12, #W1, #W2, #W3, #W4, #W5, #W6, #W7, #W8, #W9, #W10, #W11, #W12, #S1, #S2, #S3, #S4, #S5, #S6, #S7, #S8, #S9, #S10, #S11, #S12, #N1, #N2, #N3, #N4, #N5, #N6, #N7, #N8, #N9, #N10, #N11, #N12 {
     display: none;
