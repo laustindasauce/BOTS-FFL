@@ -4,5 +4,7 @@ The website is built with HTML/CSS/JavaScript. This was a fun site to build sinc
 
 ## Notes
 This would be much easier using Vue because I could do this exact webpage with a fraction of the HTML code. It's honestly ridiculous how long the HTML script is. But, I'm in way to deep to convert it to Vue. So here we are..
+* Should add Sleeper's trending players section 
+    * Could have top 10 added/dropped 24 hours and weekly
 
 #### Checkout [BOTS FFL](https://twitter.com/BOTSFFL) twitter profile :smiley:

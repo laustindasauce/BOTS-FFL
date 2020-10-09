@@ -559,6 +559,20 @@ const getMidwestRoster = async () => {
   }
 }
 
+const getTrending = async (type, hours, limit) => {
+    try {
+        const res = await axios.get(`https://sleeper.app/v1/players/nfl/trending/${type}?lookback_hours=${hours}&limit=${limit}`);
+
+        const players = res.data;
+
+        console.log(`GET: Here's the list of players`, players);
+
+        return
+    } catch (e) {
+        console.error(e);
+    }
+};
+
 
 
 
@@ -630,6 +644,7 @@ function main() {
     getMidwestRoster()
     getWestRoster()
     getWestTeams()
+    getTrending("add", 24, 5)
     mw_roster_btn.addEventListener('click', function () {
         show_mw_roster()
     })
