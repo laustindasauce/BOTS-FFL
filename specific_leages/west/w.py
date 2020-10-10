@@ -234,20 +234,14 @@ def set_standings():
             status = f"1st: {team_name} ({value}-{losses})"
         elif i <= leaders and leaders > 1:
             status = f"1st: {team_name} ({value}-{losses})"
-        elif (i - 2) % 10 == 0 and last > int(value) and i < 10:
+        elif (i - repeat - 2) % 10 == 0 and i < 10:
             status = f"2nd: {team_name} ({value}-{losses})"
-        elif (i - 2) % 10 == 0 and last > int(value) and i < 10:
-            status = f"2nd: {team_name} ({value}-{losses})"
-        elif (i - 3) % 10 == 0 and last > int(value) and i < 10:
+        elif (i - repeat - 3) % 10 == 0 and i < 10:
             status = f"3rd: {team_name} ({value}-{losses})"
-        elif (i - 3) % 10 == 0 and last == int(value) and i < 10:
-            status = f"3rd: {team_name} ({value}-{losses})"
-        elif last > int(value) and i < 10:
+        elif last > int(value):
             status = f"{i}th: {team_name} ({value}-{losses})"
-            repeat = 1
         else:
             status = f"{i - repeat}th {team_name} ({value}-{losses})"
-            repeat += 1
         client = redis.Redis(host="10.10.10.1", port=6379, db=0,
                              password=os.getenv("REDIS_PASS"))
         standings = "w_standings_" + str(i)
@@ -307,30 +301,27 @@ def set_standings_website():
             losses = int(losses)
         else:
             losses = 0
+        if last > int(value):
+            repeat = 0
+        elif last == int(value):
+            repeat += 1
         i += 1
         if i <= leaders and leaders == 1:
             status = f"1st: {team_name} ({value}-{losses})"
         elif i <= leaders and leaders > 1:
             status = f"1st: {team_name} ({value}-{losses})"
-        elif (i - 2) % 10 == 0 and last > int(value) and i < 10:
+        elif (i - repeat - 2) % 10 == 0 and i < 10:
             status = f"2nd: {team_name} ({value}-{losses})"
-        elif (i - 2) % 10 == 0 and last > int(value) and i < 10:
-            status = f"2nd: {team_name} ({value}-{losses})"
-        elif (i - 3) % 10 == 0 and last > int(value) and i < 10:
+        elif (i - repeat - 3) % 10 == 0 and i < 10:
             status = f"3rd: {team_name} ({value}-{losses})"
-        elif (i - 3) % 10 == 0 and last == int(value) and i < 10:
-            status = f"3rd: {team_name} ({value}-{losses})"
-        elif last > int(value) and i < 10:
-            status = f"{i}th: {team_name} ({value}-{losses})"
-            repeat = 1
         else:
             status = f"{i - repeat}th {team_name} ({value}-{losses})"
-            repeat += 1
         client = redis.Redis(host="10.10.10.1", port=6379, db=0,
                              password=os.getenv("REDIS_PASS"))
         standings = "w_standings_" + str(i)
         client.set(standings, status)
         last = int(value)
+        print(status)
 
 
 def set_point_leaders():
@@ -376,25 +367,25 @@ def set_point_leaders():
         if team_name in teams:
             continue
         teams.append(team_name)
+        if last > int(value):
+            repeat = 0
+        elif last == int(value):
+            repeat += 1
+        if last > int(value):
+            repeat = 0
+        elif last == int(value):
+            repeat += 1
         i += 1
         if i <= leaders and leaders == 1:
             status = f"1st: {team_name} ({value})"
         elif i <= leaders and leaders > 1:
             status = f"1st: {team_name} ({value})"
-        elif (i - 2) % 10 == 0 and i < 10 and last > int(value):
+        elif (i - repeat - 2) % 10 == 0 and i < 10:
             status = f"2nd: {team_name} ({value})"
-        elif (i - 2) % 10 == 0 and i < 10 and last > int(value):
-            status = f"2nd: {team_name} ({value})"
-        elif (i - 3) % 10 == 0 and last > int(value):
+        elif (i - repeat - 3) % 10 == 0 and i < 10:
             status = f"3rd: {team_name} ({value})"
-        elif (i - 3) % 10 == 0 and last == int(value):
-            status = f"3rd: {team_name} ({value})"
-        elif last > int(value):
-            status = f"{i}th: {team_name} ({value})"
-            repeat = 1
         else:
             status = f"{i - repeat}th: {team_name} ({value})"
-            repeat += 1
         point_leaders = "w_points_" + str(i)
         client.set(point_leaders, status)
         last = int(value)
@@ -643,7 +634,6 @@ def send_tweet(message, num, total):
 
 
 ########## Scheduler ###########
-set_standings_website()
 print(time.ctime())
 
 schedule.every().monday.at("02:00").do(update_week)
