@@ -187,6 +187,7 @@ def weekly_scores():
 
 
 def set_standings():
+    set_roster_data()
     client = redis.Redis(host="10.10.10.1", port=6379, db=5,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
@@ -634,6 +635,7 @@ def send_tweet(message, num, total):
 ########## Scheduler ###########
 print(time.ctime())
 
+schedule.every().day.at("07:00").do(set_standings)
 schedule.every().monday.at("02:00").do(update_week)
 schedule.every().tuesday.at("06:00").do(set_roster_data)
 schedule.every().tuesday.at("08:00").do(weekly_scores)
