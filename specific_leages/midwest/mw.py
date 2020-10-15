@@ -637,7 +637,8 @@ def send_tweet(message, num, total):
 ########## Scheduler ###########
 print(time.ctime())
 
-schedule.every.day.at("07:00").do(set_standings)
+schedule.every().day.at("07:00").do(set_standings)
+schedule.every().dat.at("07:30").do(set_point_leaders)
 schedule.every().monday.at("02:00").do(update_week)
 schedule.every().monday.at("03:00").do(clear_vars)
 schedule.every().tuesday.at("08:02").do(weekly_scores)
