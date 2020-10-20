@@ -107,6 +107,7 @@ def set_team_names():
     w = [x.decode('utf-8') for x in bytelist]
     i = 0
     for team in w:
+        print(team)
         i += 1
         title = "w_team_" + str(i)
         client.set(title, team)
@@ -167,10 +168,10 @@ def trending():
     #         to_string += f"{position} {key}, Position: {value}\n"
     # send_drop_tweet(to_string)
 
-trending()
+
 print(time.ctime())
 schedule.every().day.at("16:00").do(set_players)
-schedule.every().thursday.at("18:15").do(set_team_names)
+schedule.every().day.at("18:15").do(set_team_names)
 schedule.every().friday.at("18:00").do(trending)
 
 
