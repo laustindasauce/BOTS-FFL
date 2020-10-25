@@ -462,7 +462,6 @@ const getWestRoster = async () => {
             } else if (val == "WR") {
               wr++
               newId = id + "WR" + String(wr)
-              console.log(newId)
               document.getElementById(newId).innerHTML = output
             } else if (val == "TE") {
               te++
