@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: northeast
+  namespace: botsffl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: northeast
+  template:
+    metadata:
+      labels:
+        app: northeast
+    spec:
+      containers:
+      - name: northeast
+        image: registry:5000/botsffl:northeast
+        imagePullPolicy: Always
+        env:
+        - name: NORTHEAST
+          valueFrom:
+            configMapKeyRef:
+              key: NORTHEAST
+              name: botsffl-league-ids
+        - name: USER_ID
+          valueFrom:
+            configMapKeyRef:
+              key: USER_ID
+              name: botsffl-league-ids
+        - name: CONSUMER_KEY
+          valueFrom:
+            secretKeyRef:
+              key: CONSUMER_KEY
+              name: ffl-twitter-account
+        - name: CONSUMER_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: CONSUMER_SECRET
+              name: ffl-twitter-account
+        - name: KEY
+          valueFrom:
+            secretKeyRef:
+              key: KEY
+              name: ffl-twitter-account
+        - name: SECRET
+          valueFrom:
+            secretKeyRef:
+              key: SECRET
+              name: ffl-twitter-account
+        - name: REDIS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: REDIS_PASS
+              name: redis-pass
