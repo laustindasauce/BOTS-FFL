@@ -18,7 +18,7 @@ auth.set_access_token(key, secret)
 auth.secure = True
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-client = redis.Redis(host="10.10.10.1", port=6379, db=10,
+client = redis.Redis(host=os.getenv("REDIS_HOST"), port=6379, db=10,
                      password=os.getenv("REDIS_PASS"))
 
 url = "https://api.sleeper.app/v1/players/nfl"
