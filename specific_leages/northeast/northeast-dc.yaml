@@ -53,3 +53,8 @@ spec:
             secretKeyRef:
               key: REDIS_PASS
               name: redis-pass
+        - name: REDIS_HOST
+          valueFrom:
+            secretKeyRef:
+              key: REDIS_HOST
+              name: redis-pass
