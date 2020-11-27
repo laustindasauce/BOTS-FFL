@@ -63,7 +63,7 @@ HEADERS = {'USER:': user, 'LEAGUE': league}
 
 
 def weekly_scores():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host=os.getenv("REDIS_HOST"), port=6379, db=1,
                          password=os.getenv("REDIS_PASS"))
     # Let's try to get the matchups and then see who won/lost each matchup
     num_matchups, active_rosters = set_matchups(client)
@@ -73,7 +73,7 @@ def weekly_scores():
 
 
 def set_standings():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host=os.getenv("REDIS_HOST"), port=6379, db=1,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
 
@@ -130,7 +130,7 @@ def set_standings():
 
 
 def set_point_leaders():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host=os.getenv("REDIS_HOST"), port=6379, db=1,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
 
@@ -304,14 +304,14 @@ def get_league_matchups():
 
 
 def get_week():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host=os.getenv("REDIS_HOST"), port=6379, db=1,
                          password=os.getenv("REDIS_PASS"))
     # client.set('fantasy_week', '3')
     return int(client.get('fantasy_week'))
 
 
 def update_week():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host=os.getenv("REDIS_HOST"), port=6379, db=1,
                          password=os.getenv("REDIS_PASS"))
     client.incr('fantasy_week')
     week = int(client.get('fantasy_week'))
@@ -348,7 +348,7 @@ def set_roster_data():
     Within this function I want to be able to update each settings redis variable; 
     points_scored, points_allowed, wins, losses
     '''
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host=os.getenv("REDIS_HOST"), port=6379, db=1,
                          password=os.getenv("REDIS_PASS"))
     USERS_LIST = set_user_list()
     rosters = get_league_rosters()
@@ -374,7 +374,7 @@ def set_roster_data():
 
 
 def clear_vars():
-    client = redis.Redis(host="10.10.10.1", port=6379, db=1,
+    client = redis.Redis(host=os.getenv("REDIS_HOST"), port=6379, db=1,
                          password=os.getenv("REDIS_PASS"))
     league = get_specific_league()
     total_rosters = league["total_rosters"]
