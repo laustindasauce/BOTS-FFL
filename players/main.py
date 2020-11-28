@@ -170,6 +170,10 @@ def trending():
 
 
 print(time.ctime())
+set_players()
+set_team_names()
+
+
 schedule.every().day.at("16:00").do(set_players)
 schedule.every().day.at("18:15").do(set_team_names)
 schedule.every().friday.at("18:00").do(trending)
